@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">{{ tournament.name }}</h1>
+
+        <!-- Tournament Details Card -->
+        <div class="card mb-4">
+            <div class="card-header">Details</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Location: {{ tournament.location }}</li>
+                <li class="list-group-item">Number of Teams: {{ tournament.number_of_teams }}</li>
+                <li class="list-group-item">Simulation Type: {{ tournament.simulation_type }}</li>
+                <li class="list-group-item">Is Complete: {{ tournament.is_complete }}</li>
+                {% if tournament.champion %}
+                    <li class="list-group-item">
+                        Champion: {{ tournament.champion.location }} {{ tournament.champion.mascot }}</li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <!-- Teams Card -->
+        <div class="card mb-4">
+            <div class="card-header">Teams</div>
+            <ul class="list-group list-group-flush">
+                {% for team in tournament.teams.all %}
+                    <li class="list-group-item"><a
+                            href="{% url 'detail_team' team.pk %}">{{ team.location }} {{ team.mascot }}</a></li>
+                {% empty %}
+                    <li class="list-group-item">No teams</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+{#        <!-- Actions Card -->#}
+{#        <div class="card mb-4">#}
+{#            <div class="card-header">Actions</div>#}
+{#            <ul class="list-group list-group-flush">#}
+{#                {% if tournament.is_complete %}#}
+{#                    <li class="list-group-item"><a href="{% url 'tournament_results' tournament.id %}">Show Team#}
+{#                        Results</a></li>#}
+{#                    <li class="list-group-item"><a href="{% url 'list_player_tournament_stats' tournament.id %}">Show#}
+{#                        Player Tournament Stats</a></li>#}
+{#                {% else %}#}
+{#                    <li class="list-group-item"><a href="{% url 'simulate_tournament' tournament.id %}">Simulate#}
+{#                        Tournament</a></li>#}
+{#                {% endif %}#}
+{#            </ul>#}
+{#        </div>#}
+
+    </div>
+{% endblock %}

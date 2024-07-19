@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">{{ team.location }} {{ team.mascot }}</h1>
+
+        <!-- Online Players Card -->
+        <div class="card mb-4">
+            <div class="card-header">Online Players</div>
+            <ul class="list-group list-group-flush">
+                {% for player in team.o_line_players.all %}
+                    <li class="list-group-item"><a
+                            href="{% url 'detail_player' player.pk %}">{{ player.first_name }} {{ player.last_name }}</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No online players</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Defensive Line Players Card -->
+        <div class="card mb-4">
+            <div class="card-header">Defensive Line Players</div>
+            <ul class="list-group list-group-flush">
+                {% for player in team.d_line_players.all %}
+                    <li class="list-group-item"><a
+                            href="{% url 'detail_player' player.pk %}">{{ player.first_name }} {{ player.last_name }}</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No defensive line players</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Bench Players Card -->
+        <div class="card mb-4">
+            <div class="card-header">Bench Players</div>
+            <ul class="list-group list-group-flush">
+                {% for player in team.bench_players.all %}
+                    <li class="list-group-item"><a
+                            href="{% url 'detail_player' player.pk %}">{{ player.first_name }} {{ player.last_name }}</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No bench players</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+{% endblock %}

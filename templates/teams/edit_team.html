@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">Edit Team</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <h2>OLine Players</h2>
+            {{ form.o_line_players }}
+            <h2>DLine Players</h2>
+            {{ form.d_line_players }}
+            <h2>Bench Players</h2>
+            {{ form.bench_players }}
+            <button type="submit" class="btn btn-primary">Update Team</button>
+        </form>
+    </div>
+{% endblock %}

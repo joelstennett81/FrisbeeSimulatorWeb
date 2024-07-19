@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-header">Set Manual Seeds</div>
+            <div class="card-body">
+                <form method="post" action="{% url 'manually_rank_teams_for_pool_play' tournament.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="seeds">Set Seeds for Each Team</label>
+                        {% for team in teams %}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text"
+                                           for="seed-{{ team.id }}">{{ team.team.overall_rating }} Rating: {{ team.team.location }} {{ team.team.mascot }}</label>
+                                </div>
+                                <input type="number" class="form-control" id="seed-{{ team.id }}"
+                                       name="seed-{{ team.id }}" value="{{ team.pool_play_seed }}" required>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Confirm Seeding</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

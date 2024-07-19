@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-header">Instructions</div>
+            <div class="card-body">
+                <p class="card-text">
+                </p>
+                {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <p>Simulate each game individually, when they are all simulated, you can simulate the bracket</p>
+                    <a href="{% url 'simulate_full_pool_play' tournament.id %}">Simulate Pool Play All At Once</a>
+                {% elif tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <a href="{% url 'simulate_tournament' tournament.id %}">Simulate Bracket Play</a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="loading-message" style="display: none;">
+            <p>Your games are being simulated, please be patient...</p>
+        </div>
+        <!-- Pool Play Games Card -->that
+        <div class="card mb-4">
+            <div class="card-header">Pool Play Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_play_games.all %}
+                    <li class="list-group-item" id="game-{{ game.id }}">
+                        {{ game.team_one }} vs {{ game.team_two }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% include 'pool_play_scripts.html' %}
+{% endblock %}

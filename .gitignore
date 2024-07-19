@@ -1,0 +1,11 @@
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+staticfiles
+apprunner.yaml
+.env
+.env
+*.xml

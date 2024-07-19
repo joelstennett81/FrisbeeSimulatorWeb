@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">Player Tournament Stats</h1>
+        <div class="table-responsive">
+            <table id="team-table" class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Player</th>
+                    <th>Goals</th>
+                    <th>Assists</th>
+                    <th>Throwing Yards</th>
+                    <th>Receiving Yards</th>
+                    <th>Turnovers Forced</th>
+                    <th>Throwaways</th>
+                    <th>Drops</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for playerTournamentStat in playerTournamentStats %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'detail_player_tournament_stats' playerTournamentStat.tournament.id playerTournamentStat.player.id %}">{{ playerTournamentStat.player }}</a>
+                        </td>
+                        <td>{{ playerTournamentStat.goals }}</td>
+                        <td>{{ playerTournamentStat.assists }}</td>
+                        <td>{{ playerTournamentStat.throwing_yards }}</td>
+                        <td>{{ playerTournamentStat.receiving_yards }}</td>
+                        <td>{{ playerTournamentStat.turnovers_forced }}</td>
+                        <td>{{ playerTournamentStat.throwaways }}</td>
+                        <td>{{ playerTournamentStat.drops }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#player_team_stat_table').DataTable();
+            });
+        </script>
+    </div>
+{% endblock %}
+
+

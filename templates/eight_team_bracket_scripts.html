@@ -1,0 +1,139 @@
+<script>
+    $(document).ready(function () {
+        $('#loading-message').hide();
+        $('#simulateQuarterfinalRound').on('click', function () {
+            // Hide the button upon click
+            $(this).hide();
+            // Show the loading message
+            $('#loading-message').show();
+        });
+        $('#simulateSemifinalRound').on('click', function () {
+            // Hide the button upon click
+            $(this).hide();
+            // Show the loading message
+            $('#loading-message').show();
+        });
+        $('#simulateFinalRound').on('click', function () {
+            // Hide the button upon click
+            $(this).hide();
+            // Show the loading message
+            $('#loading-message').show();
+        });
+
+        // Start polling when the page loads
+        startPolling();
+
+        function startPolling() {
+            // Disable all buttons on the page
+            $('button').addClass('disable-buttons');
+            // Poll the server every 5 seconds
+            setInterval(function () {
+                $.ajax({
+                    url: "{% url 'check_bracket_simulation_status' tournament.id %}",
+                    type: 'GET',
+                    success: function (response) {
+                        if (response.simulations_complete) {
+                            // Hide the loading message
+                            $('#loading-message').hide();
+
+                            // Redirect to the appropriate results page based on the current stage
+                            if (!response.semifinal_round_completed && !response.final_round_completed) {
+                                window.location.href = "{% url 'bracket_overview' tournament.id %}";
+                            } else if (response.semifinal_round_completed && !response.final_round_completed) {
+                                window.location.href = "{% url 'bracket_overview' tournament.id %}";
+                            } else {
+                                window.location.href = "{% url 'tournament_results' tournament.id %}";
+                            }
+                        } else {
+                            updateQuarterfinalGamesData();
+                            updateSemifinalGamesData();
+                            updateFinalGamesData();
+                        }
+                    },
+                    error: function () {
+                        // Handle errors (e.g., stop polling and show an error message)
+                        console.error('Error checking simulation status');
+                    }
+                });
+            }, 10000); // 5000 milliseconds = 5 seconds
+        }
+
+        function updateQuarterfinalGamesData() {
+            // Fetch the latest game data for the semifinals from the server
+            $.ajax({
+                url: "{% url 'fetch_latest_games_data' tournament.id %}",
+                type: 'GET',
+                data: {
+                    game_type: 'Quarterfinal'
+                },
+                success: function (data) {
+                    // Update the DOM with the new game data for the semifinals
+                    $.each(data.games, function (index, game) {
+                        var gameItem = $('#game-' + game.id);
+                        if (game.is_completed) {
+                            // Construct the HTML string for the completed game
+                            var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
+                            // Update the game item's HTML with the new score
+                            gameItem.html(gameHtml);
+                        }
+                    });
+                },
+                error: function () {
+                    console.error('Error fetching latest games data for semifinals');
+                }
+            });
+        }
+
+        function updateSemifinalGamesData() {
+            // Fetch the latest game data for the semifinals from the server
+            $.ajax({
+                url: "{% url 'fetch_latest_games_data' tournament.id %}",
+                type: 'GET',
+                data: {
+                    game_type: 'Semifinal'
+                },
+                success: function (data) {
+                    // Update the DOM with the new game data for the semifinals
+                    $.each(data.games, function (index, game) {
+                        var gameItem = $('#game-' + game.id);
+                        if (game.is_completed) {
+                            // Construct the HTML string for the completed game
+                            var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
+                            // Update the game item's HTML with the new score
+                            gameItem.html(gameHtml);
+                        }
+                    });
+                },
+                error: function () {
+                    console.error('Error fetching latest games data for semifinals');
+                }
+            });
+        }
+
+        function updateFinalGamesData() {
+            // Fetch the latest game data for the finals from the server
+            $.ajax({
+                url: "{% url 'fetch_latest_games_data' tournament.id %}",
+                type: 'GET',
+                data: {
+                    game_type: 'Championship'
+                },
+                success: function (data) {
+                    // Update the DOM with the new game data for the finals
+                    $.each(data.games, function (index, game) {
+                        var gameItem = $('#game-' + game.id);
+                        if (game.is_completed) {
+                            // Construct the HTML string for the completed game
+                            var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
+                            // Update the game item's HTML with the new score
+                            gameItem.html(gameHtml);
+                        }
+                    });
+                },
+                error: function () {
+                    console.error('Error fetching latest games data for finals');
+                }
+            });
+        }
+    });
+</script>

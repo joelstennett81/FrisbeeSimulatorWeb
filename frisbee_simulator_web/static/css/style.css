@@ -1,0 +1,119 @@
+body {
+    background-color: #EFFAFD; /* Pale blue */
+    color: #4A8BDF; /* Royal blue */
+    font-family: 'Arial', sans-serif; /* Modern, clean font */
+}
+
+.navbar {
+    background-color: #A0006D; /* Eggplant */
+    color: #fff; /* White */
+}
+
+.footer {
+    padding: 20px 0;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    text-align: center; /* Center the text */
+    font-size: 14px; /* Set a font size */
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* Use oversized fonts for headings */
+h1, h2, h3, h4, h5, h6 {
+    font-size: 2em;
+}
+
+/* Add interactive elements */
+button:hover {
+    transform: scale(1.1);
+}
+
+/* Modern table design */
+.common-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.common-table th, #player-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.common-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.common-table tr:hover {
+    background-color: #ddd;
+}
+
+.common-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4A8BDF;
+    color: white;
+}
+
+.disable-buttons {
+    pointer-events: none;
+    opacity: 0.6; /* Optional: visually indicate that the buttons are disabled */
+}
+
+.bracket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.round {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.match {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.team {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.round.final {
+    margin-top: 50px;
+}
+
+.round.semifinal {
+    margin-top: 25px;
+}
+
+.round.quarterfinal {
+    margin-top: 10px;
+}
+
+.btn-link {
+    color: white; /* Change this to your preferred text color */
+    padding: 15px 25px; /* Adjust padding as needed */
+    text-decoration: none; /* Removes the underline */
+    display: inline-block; /* Allows padding and other styling */
+    border-radius: 5px; /* Optional: adds rounded corners */
+}
+
+.disabled-link {
+    pointer-events: none;
+    cursor: not-allowed; /* Optional: changes the cursor to indicate the link is disabled */
+}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <a href="{% url 'simulate_full_pool_play' tournament.id %}" class="btn-link"
+                       id="simulatePoolPlay">Simulate Pool Play All At Once</a>
+                {% elif tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <a href="{% url 'simulate_tournament' tournament.id %}" class="btn-link"
+                       id="simulateBracketPlay" style="display: none;">Simulate Bracket Play</a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="loading-message" style="display: none;">
+            <p>Your games are being simulated, please be patient...</p>
+        </div>
+        <!-- Pool A Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool A Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_a_games %}
+                    <li class="list-group-item" id="game-{{ game.id }}">
+                        {{ game.team_one }} vs {{ game.team_two }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool B Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool B Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_b_games %}
+                    <li class="list-group-item" id="game-{{ game.id }}">
+                        {{ game.team_one }} vs {{ game.team_two }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% include 'pool_play_scripts.html' %}
+{% endblock %}

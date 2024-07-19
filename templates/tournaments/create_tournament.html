@@ -1,0 +1,14 @@
+{% extends 'base_form.html' %}
+
+{% block title %}Create New Tournament{% endblock %}
+{% block submit_button %}Create{% endblock %}
+
+
+<script>
+    $(document).ready(function () {
+        $('#id_teams').select2({
+            placeholder: "Select teams",
+            allowClear: true
+        });
+    });
+</script>

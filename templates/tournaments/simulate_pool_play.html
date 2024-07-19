@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">Simulate Pool Play</h1>
+        <ul class="list-group">
+            {% for game in games %}
+                <li class="list-group-item">
+                    {{ game.team_one }} vs {{ game.team_two }}
+                    <button class="btn btn-primary" onclick="simulateGame({{ game.id }})">Simulate</button>
+                    <span id="game_{{ game.id }}_result" style="display: none;"></span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        function simulateGame(gameId) {
+            $.ajax({
+                url: '/path/to/your/simulate_game/endpoint/' + gameId,
+                success: function (data) {
+                    // Update the game result
+                    $('#game_' + gameId + '_result').text(data.winner.team + ' won ' + data.winner_score + '-' + data.loser_score);
+                    $('#game_' + gameId + '_result').show();
+                }
+            });
+        }
+    </script>
+{% endblock %}

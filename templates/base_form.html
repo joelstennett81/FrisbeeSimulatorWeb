@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4 text-center">{% block title %}{% endblock %}</h1>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="row">
+                {% for field in form %}
+                    <div class="col-12 col-md-6">
+                        <div class="form-group row">
+                            <label for="{{ field.id_for_label }}"
+                                   class="col-sm-4 col-form-label">{{ field.label }}</label>
+                            <div class="col-sm-8">
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ field.errors|join:", " }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+        <br>
+    </div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-header">Next Steps</div>
+            <div class="card-body">
+                <p class="card-text">
+                    Now that the pool play is complete, you can proceed to the next steps.
+                </p>
+                {% if tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <a href="{% url 'bracket_overview' tournament.id %}">Go to Bracket Overview</a>
+                {% endif %}
+            </div>
+        </div>
+        <h1 class="mb-4">Pool Play Results</h1>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool A Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team in pool_a_teams %}
+                    <li class="list-group-item">
+                        {{ team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool A Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool A Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_a_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool B Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team in pool_b_teams %}
+                    <li class="list-group-item">
+                        {{ team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool B Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool B Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_b_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool C Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team in pool_c_teams %}
+                    <li class="list-group-item">
+                        {{ team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool C Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool C Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_c_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Team Statistics Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool D Team Statistics</div>
+            <ul class="list-group list-group-flush">
+                {% for team in pool_d_teams %}
+                    <li class="list-group-item">
+                        {{ team }}: {{ team.pool_play_wins }}
+                        wins, {{ team.pool_play_losses }}
+                        losses, Point Differential: {{ team.pool_play_point_differential }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Pool D Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Pool D Games</div>
+            <ul class="list-group list-group-flush">
+                {% for game in pool_d_games %}
+                    <li class="list-group-item">
+                        {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
+                        won {{ game.winner_score }}- {{ game.loser_score }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

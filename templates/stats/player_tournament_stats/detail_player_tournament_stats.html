@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="text-center my-4">Player Tournament Stats</h1>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">{{ playerTournamentStat.player }}</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Goals: {{ playerTournamentStat.goals }}</li>
+                    <li class="list-group-item">Assists: {{ playerTournamentStat.assists }}</li>
+                    <li class="list-group-item">Swing Passes Thrown: {{ playerTournamentStat.swing_passes_thrown }}</li>
+                    <li class="list-group-item">Swing Passes
+                        Completed: {{ playerTournamentStat.swing_passes_completed }}</li>
+                    <li class="list-group-item">Under Passes Thrown: {{ playerTournamentStat.under_passes_thrown }}</li>
+                    <li class="list-group-item">Under Passes
+                        Completed: {{ playerTournamentStat.under_passes_completed }}</li>
+                    <li class="list-group-item">Short Hucks Thrown: {{ playerTournamentStat.short_hucks_thrown }}</li>
+                    <li class="list-group-item">Short Hucks
+                        Completed: {{ playerTournamentStat.short_hucks_completed }}</li>
+                    <li class="list-group-item">Deep Hucks Thrown: {{ playerTournamentStat.deep_hucks_thrown }}</li>
+                    <li class="list-group-item">Deep Hucks
+                        Completed: {{ playerTournamentStat.deep_hucks_completed }}</li>
+                    <li class="list-group-item">Throwing Yards: {{ playerTournamentStat.throwing_yards }}</li>
+                    <li class="list-group-item">Receiving Yards: {{ playerTournamentStat.receiving_yards }}</li>
+                    <li class="list-group-item">Turnovers Forced: {{ playerTournamentStat.turnovers_forced }}</li>
+                    <li class="list-group-item">Throwaways: {{ playerTournamentStat.throwaways }}</li>
+                    <li class="list-group-item">Drops: {{ playerTournamentStat.drops }}</li>
+                    <li class="list-group-item">Callahans: {{ playerTournamentStat.callahans }}</li>
+                    <li class="list-group-item">Pulls: {{ playerTournamentStat.pulls }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

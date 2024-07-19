@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">{{ player.first_name }} {{ player.last_name }}</h1>
+
+        <!-- Row for two columns -->
+        <div class="row">
+
+            <!-- Basic Information Card -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">Basic Information</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Jersey Number: {{ player.jersey_number }}</li>
+                        <li class="list-group-item">Height: {{ player.height_in_inches }}</li>
+                        <li class="list-group-item">Weight: {{ player.weight_in_lbs }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Physical Attributes Card -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">Physical Attributes</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Speed: {{ player.speed }}</li>
+                        <li class="list-group-item">Jumping: {{ player.jumping }}</li>
+                        <li class="list-group-item">Agility: {{ player.agility }}</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Row for two columns -->
+        <div class="row">
+
+            <!-- Defense Ratings Card -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">Defense Ratings</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Deep Huck Cut Defense: {{ player.deep_huck_cut_defense }}</li>
+                        <li class="list-group-item">Short Huck Cut Defense: {{ player.short_huck_cut_defense }}</li>
+                        <li class="list-group-item">Under Cut Defense: {{ player.under_cut_defense }}</li>
+                        <li class="list-group-item">Handle Mark Defense: {{ player.handle_mark_defense }}</li>
+                        <li class="list-group-item">Handle Cut Defense: {{ player.handle_cut_defense }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Offense Ratings Card -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">Offense Ratings</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Deep Huck Cut Offense: {{ player.deep_huck_cut_offense }}</li>
+                        <li class="list-group-item">Short Huck Cut Offense: {{ player.short_huck_cut_offense }}</li>
+                        <li class="list-group-item">Under Cut Offense: {{ player.under_cut_offense }}</li>
+                        <li class="list-group-item">Handle Cut Offense: {{ player.handle_cut_offense }}</li>
+                        <li class="list-group-item">Swing Throw Offense: {{ player.swing_throw_offense }}</li>
+                        <li class="list-group-item">Under Throw Offense: {{ player.under_throw_offense }}</li>
+                        <li class="list-group-item">Short Huck Throw Offense: {{ player.short_huck_throw_offense }}</li>
+                        <li class="list-group-item">Deep Huck Throw Offense: {{ player.deep_huck_throw_offense }}</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Overall Ratings Card -->
+        <div class="card mb-4">
+            <div class="card-header">Overall Ratings</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Overall Rating: {{ player.overall_rating }}</li>
+                <li class="list-group-item">Overall Handle Offense
+                    Rating: {{ player.overall_handle_offense_rating }}</li>
+                <li class="list-group-item">Overall Handle Defense
+                    Rating: {{ player.overall_handle_defense_rating }}</li>
+                <li class="list-group-item">Overall Cutter Offense
+                    Rating: {{ player.overall_cutter_offense_rating }}</li>
+                <li class="list-group-item">Overall Cutter Defense
+                    Rating: {{ player.overall_cutter_defense_rating }}</li>
+            </ul>
+        </div>
+
+    </div>
+{% endblock %}

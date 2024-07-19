@@ -1,0 +1,76 @@
+<script>
+    $(document).ready(function () {
+        $('#loading-message').hide();
+        $('#simulatePoolPlay').on('click', function () {
+            // Hide the button upon click
+            $(this).hide();
+            // Show the loading message
+            $('#loading-message').show();
+        });
+
+        // Start polling when the page loads
+        startPolling();
+
+        function startPolling() {
+            // Disable all buttons on the page
+            $('button').addClass('disable-buttons');
+            // Poll the server every 5 seconds
+            setInterval(function () {
+                $.ajax({
+                    url: "{% url 'check_pool_play_simulation_status' tournament.id %}",
+                    type: 'GET',
+                    success: function (response) {
+                        if (response.simulations_complete) {
+                            // Enable all buttons on the page
+                            $('button').removeClass('disable-buttons');
+                            // Hide the "Simulate Pool Play All At Once" button
+                            $('#simulatePoolPlay').hide();
+                            // Show the "Simulate Bracket Play" button
+                            $('#simulateBracketPlay').show();
+                            // Redirect to the pool play results page
+                            window.location.href = "{% url 'pool_play_results' tournament.id %}";
+                        } else {
+                            // Update game scores for completed games
+                            updateGamesData();
+                        }
+                    },
+                    error: function () {
+                        // Handle errors (e.g., stop polling and show an error message)
+                        console.error('Error checking simulation status');
+                    }
+                });
+            }, 10000); // 5000 milliseconds = 5 seconds
+        }
+
+        function updateGamesData() {
+            // Fetch the latest game data from the server
+            $.ajax({
+                url: "{% url 'fetch_latest_games_data' tournament.id %}",
+                type: 'GET',
+                success: function (data) {
+                    // Update the DOM with the new game data
+                    var completedGamesCount = 0;
+                    $.each(data.games, function (index, game) {
+                        var gameItem = $('#game-' + game.id);
+                        if (game.is_completed) {
+                            completedGamesCount++;
+                            // Construct the HTML string for the completed game
+                            var gameHtml = game.winner_team + ' won ' + game.winner_score + '-' + game.loser_score + ' over ' + game.loser_team;
+                            // Update the game item's HTML with the new score
+                            gameItem.html(gameHtml);
+                        }
+                    });
+
+                    // Check if all games are completed
+                    if (completedGamesCount === {{ total_number_of_games }}) {
+                        // Redirect to the pool play results page
+                        window.location.href = "{% url 'pool_play_results' tournament.id %}";
+                    }
+                },
+                error: function () {
+                    console.error('Error fetching latest games data');
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                {% if not tournament.pool_play_completed and not tournament.bracket_play_completed %}
+                    <a href="{% url 'simulate_full_pool_play' tournament.id %}" class="btn-link"
+                       id="simulatePoolPlay">Simulate Pool Play All At Once</a>
+                {% elif tournament.pool_play_completed and not tournament.semifinal_round_completed and not tournament.final_round_completed %}
+                    <a href="{% url 'simulate_semifinal_round' tournament.id %}" class="btn-link"
+                       id="simulateSemifinalRound">Simulate Semi-Final Round</a>
+                {% elif tournament.pool_play_completed and tournament.semifinal_round_completed and not tournament.final_round_completed %}
+                    <a href="{% url 'simulate_final_round' tournament.id %}" class="btn-link"
+                       id="simulateFinalRound">Simulate Final Round</a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="loading-message" style="display: none;">
+            <p>Your games are being simulated, please be patient...</p>
+        </div>
+        <!-- Semifinal Games Card -->
+        <div class="card mb-4">
+            <div class="card-header">Semifinal Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Semifinal' %}
+                        <li class="list-group-item" id="game-{{ game.id }}">
+                            {{ game.team_one }} vs {{ game.team_two }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Third Place Game Card -->
+        <div class="card mb-4">
+            <div class="card-header">Third Place Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == '3rd-Place Final' %}
+                        <li class="list-group-item" id="game-{{ game.id }}">
+                            {{ game.team_one }} vs {{ game.team_two }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Championship Game Card -->
+        <div class="card mb-4">
+            <div class="card-header">Championship Results</div>
+            <ul class="list-group list-group-flush">
+                {% for game in tournament.games.all %}
+                    {% if game.game_type == 'Championship' %}
+                        <li class="list-group-item" id="game-{{ game.id }}">
+                            {{ game.team_one }} vs {{ game.team_two }}
+                        </li>
+                    {% endif %}
+                {% empty %}
+                    <li class="list-group-item">No games yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% include 'four_team_bracket_scripts.html' %}
+{% endblock %}
