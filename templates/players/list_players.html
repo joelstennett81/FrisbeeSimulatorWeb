@@ -6,6 +6,9 @@
         <a href="{% url 'create_player' %}" class="btn btn-primary mb-4">Create Player</a>
         <button onclick="window.location.href='{% url 'list_public_players' %}'">List Public Players</button>
         <button onclick="window.location.href='{% url 'list_players' %}'">List Personal Players</button>
+        <button onclick="window.location.href='{% url 'upload_players_spreadsheet' %}'" class="btn btn-success mb-4">Upload
+            Spreadsheet
+        </button>
         <div class="table-responsive">
             <table id="player-table" class="table table-striped table-bordered">
                 <thead class="thead-dark">

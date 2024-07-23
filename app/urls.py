@@ -75,5 +75,6 @@ urlpatterns = [
     path('games/simulate_individual_game/<int:game_id>/', games.simulate_individual_game,
          name='simulate_individual_game'),
     path('games/create_individual_game/', games.create_individual_game, name='create_individual_game'),
-    path('games/games_list/', games.games_list, name='games_list')
+    path('games/games_list/', games.games_list, name='games_list'),
+    path('players/upload_players_spreadsheet/', players.upload_players_spreadsheet, name='upload_players_spreadsheet'),
 ]

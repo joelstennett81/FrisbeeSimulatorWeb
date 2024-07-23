@@ -189,3 +189,7 @@ class UpdateTournamentTeamPoolPlaySeedForm(forms.ModelForm):
     class Meta:
         model = TournamentTeam
         fields = ['pool_play_seed']
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()

@@ -64,9 +64,9 @@ class Player(models.Model):
     ]
     primary_line = models.CharField(max_length=50, choices=PRIMARY_LINE_CHOICES, null=True)
     PRIMARY_POSITION_CHOICES = [
-        ('OFFENSE', 'OFFENSE'),
-        ('DEFENSE', 'DEFENSE'),
-        ('BENCH', 'BENCH'),
+        ('HANDLE', 'HANDLE'),
+        ('CUTTER', 'CUTTER'),
+        ('HYBRID', 'HYBRID'),
     ]
     primary_position = models.CharField(max_length=50, choices=PRIMARY_POSITION_CHOICES, null=True)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)

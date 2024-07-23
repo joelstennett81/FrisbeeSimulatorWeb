@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1>Upload Players Spreadsheet</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+        <hr>
+        <h2>Download Spreadsheet Template</h2>
+        <p>To ensure compatibility, please download and use this spreadsheet template:</p>
+        <a href="{% static 'upload_player_spreadsheet.csv' %}" class="btn btn-secondary">Download Template</a>
+    </div>
+{% endblock %}

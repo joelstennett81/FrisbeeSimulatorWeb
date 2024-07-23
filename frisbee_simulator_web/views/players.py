@@ -1,10 +1,16 @@
 from django.contrib.auth.decorators import login_required
+from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
-
-from frisbee_simulator_web.forms import PlayerForm
+import os
+from django.shortcuts import render, redirect
+from django.views.static import serve
+from tablib import Dataset
+from app import settings
+from frisbee_simulator_web.forms import PlayerForm, UploadFileForm
 from frisbee_simulator_web.models import Player
+from frisbee_simulator_web.resources import PlayerResource
 from frisbee_simulator_web.views.misc import create_random_player
 
 
@@ -47,3 +53,18 @@ class PlayerUpdateView(UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs.update({'request': self.request})
         return kwargs
+
+
+def upload_players_spreadsheet(request):
+    if request.method == 'POST':
+        player_resource = PlayerResource()
+        dataset = Dataset().load(request.FILES['file'].read(), format='xlsx')
+        result = player_resource.import_data(dataset,
+                                             dry_run=False)  # Set dry_run=True to test the import without saving
+
+        if not result.has_errors():
+            return redirect('list_players')  # Redirect to success page after successful import
+    else:
+        form = UploadFileForm()  # Assuming you have an UploadFileForm defined
+    return render(request, 'players/upload_player_spreadsheet.html', {'form': form})  # Render form on GET request
+
