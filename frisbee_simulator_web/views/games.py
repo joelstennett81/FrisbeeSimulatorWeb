@@ -29,8 +29,7 @@ def create_individual_game(request):
         form = GameForm(request=request)
     return render(request, 'games/create_individual_game.html', {'form': form})
 
-
-def simulate_individual_game(request, game_id):
+def perform_simulate_individual_game(request, game_id):
     game = Game.objects.get(id=game_id)
     gameSimulation = GameSimulation(tournament=None, game=game)
     gameSimulation.coin_flip()
@@ -58,6 +57,10 @@ def simulate_individual_game(request, game_id):
     game.created_by = request.user.profile
     game.is_completed = True
     game.save()
+    return game
+
+def simulate_individual_game(request, game_id):
+    game = perform_simulate_individual_game(request, game_id)
     return redirect(reverse('detail_game', kwargs={'pk': game.id}))
 
 

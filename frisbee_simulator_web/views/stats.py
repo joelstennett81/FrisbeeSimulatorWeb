@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, Player, PlayerGameStat, Game
 
 

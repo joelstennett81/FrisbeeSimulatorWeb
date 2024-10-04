@@ -20,6 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'frisbee_simulator_web.apps.FrisbeeSimulatorWebConfig',
+    'rest_framework',
+    'api'
 ]
 
 MIDDLEWARE = [
