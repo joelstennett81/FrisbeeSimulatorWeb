@@ -217,7 +217,10 @@ class TournamentTeam(models.Model):
     bracket_play_losses = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return 'Seed ' + str(self.pool_play_seed) + ': ' + self.team.location + ' ' + self.team.mascot
+        return '(' + str(self.pool_play_seed) + ') ' + self.team.location + ' ' + self.team.mascot
+
+    def unseeded_name(self):
+        return self.team.location + ' ' + self.team.mascot
 
 
 class Game(models.Model):
@@ -321,6 +324,7 @@ class PlayerGameStat(models.Model):
 class PlayerTournamentStat(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='player_stats')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='tournament_stats')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='player_tournament_stats', blank=True, null=True)
     goals = models.PositiveIntegerField(default=0)
     assists = models.PositiveIntegerField(default=0)
     swing_passes_thrown = models.PositiveIntegerField(default=0)

@@ -28,23 +28,23 @@ def setup_manual_pool_play_games_for_simulation(request, tournament_id):
         # Round  1
         games.extend([
             Game.objects.create(team_one=tournament_teams[0], team_two=tournament_teams[1],
-                                tournament=tournament, game_type='Pool Play'),
+                                tournament=tournament, game_type='Pool Play', pool=pool),
             Game.objects.create(team_one=tournament_teams[2], team_two=tournament_teams[3],
-                                tournament=tournament, game_type='Pool Play')
+                                tournament=tournament, game_type='Pool Play', pool=pool)
         ])
         # Round  2
         games.extend([
             Game.objects.create(team_one=tournament_teams[0], team_two=tournament_teams[2],
-                                tournament=tournament, game_type='Pool Play'),
+                                tournament=tournament, game_type='Pool Play', pool=pool),
             Game.objects.create(team_one=tournament_teams[1], team_two=tournament_teams[3],
-                                tournament=tournament, game_type='Pool Play')
+                                tournament=tournament, game_type='Pool Play', pool=pool)
         ])
         # Round  3
         games.extend([
             Game.objects.create(team_one=tournament_teams[0], team_two=tournament_teams[3],
-                                tournament=tournament, game_type='Pool Play'),
+                                tournament=tournament, game_type='Pool Play', pool=pool),
             Game.objects.create(team_one=tournament_teams[1], team_two=tournament_teams[2],
-                                tournament=tournament, game_type='Pool Play')
+                                tournament=tournament, game_type='Pool Play', pool=pool)
         ])
     elif num_teams == 8:
         poolATeams = [tournament_teams[i] for i in [0, 3, 4, 7]]

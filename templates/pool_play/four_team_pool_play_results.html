@@ -14,34 +14,6 @@
             </div>
         </div>
         <h1 class="mb-4">Pool Play Results</h1>
-        <!-- Team Statistics Card -->
-        <div class="card mb-4">
-            <div class="card-header">Team Statistics</div>
-            <ul class="list-group list-group-flush">
-                {% for team_stat in teams_stats %}
-                    <li class="list-group-item">
-                        {{ team_stat.team }}: {{ team_stat.pool_play_wins }}
-                        wins, {{ team_stat.pool_play_losses }}
-                        losses, Point Differential: {{ team_stat.pool_play_point_differential }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Pool Play Games Card -->
-        <div class="card mb-4">
-            <div class="card-header">Pool Play Games</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Pool Play' %}
-                        <li class="list-group-item">
-                            {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
-                            won {{ game.winner_score }}- {{ game.loser_score }}
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
+        {% include "reusable_cards/pool_results_card.html" with pool_letter="A" pool_teams=pool_a_teams pool_games=pool_a_games %}
     </div>
 {% endblock %}

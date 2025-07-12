@@ -1,0 +1,17 @@
+<div class="card mb-4" id="winnersBracketCard">
+    <div class="card-header">{{ title }}</div>
+    <ul class="list-group list-group-flush">
+        {% for game in tournament.games.all %}
+            {% if game.game_type == game_type %}
+                <li class="list-group-item">
+                    <a href="{% url 'detail_game' game.id %}">
+                        <strong>{{ game.winner }}</strong> {{ game.winner_score }}
+                        - {{ game.loser }} {{ game.loser_score }}
+                    </a>
+                </li>
+            {% endif %}
+        {% empty %}
+            <li class="list-group-item">No games yet</li>
+        {% endfor %}
+    </ul>
+</div>

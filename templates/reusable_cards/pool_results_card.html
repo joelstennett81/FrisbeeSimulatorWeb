@@ -1,0 +1,29 @@
+<!-- Team Statistics Card -->
+<div class="card mb-4">
+    <div class="card-header">Pool {{ pool_letter }} Results</div>
+    <ul class="list-group list-group-flush">
+        {% for team in pool_teams %}
+            <li class="list-group-item">
+                {{ team }}: {{ team.pool_play_wins }} wins,
+                {{ team.pool_play_losses }} losses,
+                Point Differential: {{ team.pool_play_point_differential }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Pool Games Card -->
+<div class="card mb-4">
+    <div class="card-header">Pool {{ pool_letter }} Games</div>
+    <ul class="list-group list-group-flush">
+        {% for game in pool_games %}
+            <li class="list-group-item">
+                <a href="{% url 'detail_game' game.id %}">
+                    <strong>{{ game.winner }}</strong> {{ game.winner_score }} - {{ game.loser }} {{ game.loser_score }}
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No games yet</li>
+        {% endfor %}
+    </ul>
+</div>

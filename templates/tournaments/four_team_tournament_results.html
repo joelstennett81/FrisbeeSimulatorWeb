@@ -2,145 +2,15 @@
 
 {% block content %}
     <div class="container py-4">
-        <h1 class="mb-4">Tournament Results</h1>
-        <!-- Team Statistics Card -->
-        <div class="card mb-4">
-            <div class="card-header">Team Statistics</div>
-            <ul class="list-group list-group-flush">
-                {% for team_stat in teams_stats %}
-                    <li class="list-group-item">
-                        {{ team_stat.team }}: {{ team_stat.pool_play_wins }}
-                        wins, {{ team_stat.pool_play_losses }}
-                        losses, Point Differential: {{ team_stat.pool_play_point_differential }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Pool Play Games Card -->
-        <div class="card mb-4">
-            <div class="card-header">Pool Games</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Pool Play' %}
-                        <li class="list-group-item">
-                            <a href="{% url 'detail_game' game.id %}">
-                                {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
-                                won {{ game.winner_score }}- {{ game.loser_score }}
-                            </a>
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Semifinal Games Card -->
-        <div class="card mb-4">
-            <div class="card-header">Semifinal Results</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Semifinal' %}
-                        <li class="list-group-item">
-                            <a href="{% url 'detail_game' game.id %}">
-                                {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
-                                won {{ game.winner_score }}- {{ game.loser_score }}
-                            </a>
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Third Place Game Card -->
-        <div class="card mb-4">
-            <div class="card-header">Third Place Results</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == '3rd-Place Final' %}
-                        <li class="list-group-item">
-                            <a href="{% url 'detail_game' game.id %}">
-                                {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
-                                won {{ game.winner_score }}- {{ game.loser_score }}
-                            </a>
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Championship Game Card -->
-        <div class="card mb-4">
-            <div class="card-header">Championship Results</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Championship' %}
-                        <li class="list-group-item">
-                            <a href="{% url 'detail_game' game.id %}">
-                                {{ game.team_one }} vs {{ game.team_two }}: {{ game.winner }}
-                                won {{ game.winner_score }}- {{ game.loser_score }}
-                            </a>
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Overall Winner Card -->
-        <div class="card">
-            <div class="card-header">Overall Winner</div>
-            <div class="card-body">
-                <p class="card-text">
-                    The overall winner of the tournament is {{ tournament.champion }}
-                </p>
-            </div>
-        </div>
-        <!-- Top Goals Card -->
-        <div class="card mb-4">
-            <div class="card-header">Top Goals</div>
-            <ul class="list-group list-group-flush">
-                {% for stat in top_goals %}
-                    <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.goals }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Top Assists Card -->
-        <div class="card mb-4">
-            <div class="card-header">Top Assists</div>
-            <ul class="list-group list-group-flush">
-                {% for stat in top_assists %}
-                    <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.assists }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Top Throwing Yards Card -->
-        <div class="card mb-4">
-            <div class="card-header">Top Throwing Yards</div>
-            <ul class="list-group list-group-flush">
-                {% for stat in top_throwing_yards %}
-                    <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.throwing_yards }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Top Receiving Yards Card -->
-        <div class="card mb-4">
-            <div class="card-header">Top Receiving Yards</div>
-            <ul class="list-group list-group-flush">
-                {% for stat in top_receiving_yards %}
-                    <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.receiving_yards }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Top Throwaways Card -->
-        <div class="card mb-4">
-            <div class="card-header">Top Throwaways</div>
-            <ul class="list-group list-group-flush">
-                {% for stat in top_throwaways %}
-                    <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.throwaways }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+        {% include "reusable_cards/overall_winner_card.html" %}
+        <h2 class="mt-5 mb-4">Winners Bracket Results</h2>
+        {% include "reusable_cards/winner_tournament_results_card.html" with game_type="Championship" title="Championship Results" %}
+        {% include "reusable_cards/winner_tournament_results_card.html" with game_type="Semifinal" title="Semifinal Results" %}
+        {% include "reusable_cards/winner_tournament_results_card.html" with game_type="3rd-Place Final" title="3rd-Place Final Results" %}
+        <h2 class="mt-5 mb-4">Pool Play Results</h2>
+        {% include "reusable_cards/pool_results_card.html" with pool_letter="A" pool_teams=pool_a_teams pool_games=pool_a_games %}
+        <h2 class="mt-5 mb-4">Tournament Stats</h2>
+        {% include "reusable_cards/tournament_results_stats_card.html" %}
+
     </div>
 {% endblock %}

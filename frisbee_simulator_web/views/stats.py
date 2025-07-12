@@ -5,7 +5,7 @@ from frisbee_simulator_web.models import Tournament, PlayerTournamentStat, Playe
 
 def list_player_tournament_stats(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
-    playerTournamentStats = PlayerTournamentStat.objects.filter(tournament=tournament)
+    playerTournamentStats = PlayerTournamentStat.objects.filter(tournament=tournament).order_by('-goals', '-assists', '-throwing_yards')
     return render(request,
                   'stats/player_tournament_stats/list_player_tournament_stats.html',
                   {'playerTournamentStats': playerTournamentStats})

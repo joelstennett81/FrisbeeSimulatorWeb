@@ -17,18 +17,8 @@
         <div id="loading-message" style="display: none;">
             <p>Your games are being simulated, please be patient...</p>
         </div>
-        <div class="card mb-4">
-            <div class="card-header">Pool Play Games</div>
-            <ul class="list-group list-group-flush">
-                {% for game in pool_play_games.all %}
-                    <li class="list-group-item" id="game-{{ game.id }}">
-                        {{ game.team_one }} vs {{ game.team_two }}
-                    </li>
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
+        <!-- Pool A Games Card -->
+        {% include "reusable_cards/pool_play_overview_card.html" with pool_letter="A" pool_games=pool_a_games %}
     </div>
     {% include 'pool_play_scripts.html' %}
 {% endblock %}

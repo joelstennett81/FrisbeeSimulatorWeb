@@ -19,51 +19,10 @@
         <div id="loading-message" style="display: none;">
             <p>Your games are being simulated, please be patient...</p>
         </div>
-        <!-- Semifinal Games Card -->
-        <div class="card mb-4">
-            <div class="card-header">Semifinal Results</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Semifinal' %}
-                        <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one }} vs {{ game.team_two }}
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Third Place Game Card -->
-        <div class="card mb-4">
-            <div class="card-header">Third Place Results</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == '3rd-Place Final' %}
-                        <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one }} vs {{ game.team_two }}
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
-        <!-- Championship Game Card -->
-        <div class="card mb-4">
-            <div class="card-header">Championship Results</div>
-            <ul class="list-group list-group-flush">
-                {% for game in tournament.games.all %}
-                    {% if game.game_type == 'Championship' %}
-                        <li class="list-group-item" id="game-{{ game.id }}">
-                            {{ game.team_one }} vs {{ game.team_two }}
-                        </li>
-                    {% endif %}
-                {% empty %}
-                    <li class="list-group-item">No games yet</li>
-                {% endfor %}
-            </ul>
-        </div>
+        {% include "reusable_cards/bracket_results_card.html" with title="Semifinal Results" game_type="Semifinal" %}
+        {% include "reusable_cards/bracket_results_card.html" with title="3rd-Place Final Results" game_type="3rd-Place Final" %}
+        {% include "reusable_cards/bracket_results_card.html" with title="Championship Results" game_type="Championship" %}
+
     </div>
     {% include 'four_team_bracket_scripts.html' %}
 {% endblock %}
