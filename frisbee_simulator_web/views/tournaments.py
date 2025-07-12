@@ -92,8 +92,9 @@ def pool_play_overview(request, tournament_id):
     if tournament.number_of_teams == 4:
         tournament.pool_play_total_number_of_games = 6
         tournament.save()
+        pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
         return render(request, 'pool_play/four_team_pool_play_overview.html',
-                      {'pool_play_games': tournament.pool_play_games, 'tournament': tournament,
+                      {'pool_a_games': pool_a_games, 'tournament': tournament,
                        'total_number_of_games': tournament.pool_play_total_number_of_games})
     elif tournament.number_of_teams == 8:
         tournament.pool_play_total_number_of_games = 12
@@ -351,6 +352,7 @@ def save_tournament_player_stats_from_game_player_stats(tournament_id):
             playerTournamentStat, created = PlayerTournamentStat.objects.get_or_create(
                 tournament=tournament,
                 player=player,
+                team=team
             )
             aggregates = gameStats.aggregate(
                 goals=Sum('goals'),
@@ -387,7 +389,8 @@ def game_results(request, game_id):
 def pool_play_results(request, tournament_id):
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     number_of_teams = tournament.number_of_teams
-    teams = TournamentTeam.objects.filter(tournament=tournament)
+    teams = TournamentTeam.objects.filter(tournament=tournament).order_by('-pool_play_wins',
+                                                                          '-pool_play_point_differential')
     teams_stats = []
     for team in teams:
         team_stats = {
@@ -405,18 +408,25 @@ def pool_play_results(request, tournament_id):
     top_receiving_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
         F('receiving_yards').desc())[:3]
     if number_of_teams == 4:
+        pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
+        pool_a = TournamentPool.objects.get(tournament=tournament, name='Pool A')
+        pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
         context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
                    'top_goals': top_goals,
                    'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
-                   'top_receiving_yards': top_receiving_yards}
+                   'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
+                   'pool_a_teams': pool_a_teams}
         return render(request, 'pool_play/four_team_pool_play_results.html', context)
     elif number_of_teams == 8:
         pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
         pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B')
         pool_a = TournamentPool.objects.get(tournament=tournament, name='Pool A')
         pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
-        pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
-        pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
+        pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+        pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
         context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
                    'top_goals': top_goals,
                    'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
@@ -432,10 +442,14 @@ def pool_play_results(request, tournament_id):
         pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
         pool_c = TournamentPool.objects.get(tournament=tournament, name='Pool C')
         pool_d = TournamentPool.objects.get(tournament=tournament, name='Pool D')
-        pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
-        pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
-        pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c)
-        pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d)
+        pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+        pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+        pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+        pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
         context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
                    'top_goals': top_goals,
                    'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
@@ -453,10 +467,14 @@ def pool_play_results(request, tournament_id):
         pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
         pool_c = TournamentPool.objects.get(tournament=tournament, name='Pool C')
         pool_d = TournamentPool.objects.get(tournament=tournament, name='Pool D')
-        pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
-        pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
-        pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c)
-        pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d)
+        pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+        pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+        pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+        pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
         context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
                    'top_goals': top_goals,
                    'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
@@ -492,19 +510,25 @@ def tournament_results(request, tournament_id):
         return redirect(reverse('pool_play_results', kwargs={'tournament_id': tournament_id}))
     elif tournament.pool_play_completed and tournament.semifinal_round_completed and tournament.final_round_completed:
         if number_of_teams == 4:
+            pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
+            pool_a = TournamentPool.objects.get(tournament=tournament, name='Pool A')
+            pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
             context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
-                       'top_assists': top_assists,
-                       'top_goals': top_goals,
-                       'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,
-                       'top_receiving_yards': top_receiving_yards}
+                       'top_assists': top_assists, 'top_goals': top_goals, 'top_throwaways': top_throwaways,
+                       'top_throwing_yards': top_throwing_yards,
+                       'top_receiving_yards': top_receiving_yards, 'pool_a_games': pool_a_games,
+                       'pool_a_teams': pool_a_teams}
             return render(request, 'tournaments/four_team_tournament_results.html', context)
         elif number_of_teams == 8:
             pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
             pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B')
             pool_a = TournamentPool.objects.get(tournament=tournament, name='Pool A')
             pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
-            pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
-            pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
+            pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+            pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
             context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
                        'top_assists': top_assists,
                        'top_goals': top_goals,
@@ -521,10 +545,14 @@ def tournament_results(request, tournament_id):
             pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
             pool_c = TournamentPool.objects.get(tournament=tournament, name='Pool C')
             pool_d = TournamentPool.objects.get(tournament=tournament, name='Pool D')
-            pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a)
-            pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b)
-            pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c)
-            pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d)
+            pool_a_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_a).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+            pool_b_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_b).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+            pool_c_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_c).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+            pool_d_teams = TournamentTeam.objects.filter(tournament=tournament, pool=pool_d).order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
             context = {'tournament_id': tournament_id, 'tournament': tournament, 'teams_stats': teams_stats,
                        'top_assists': top_assists,
                        'top_goals': top_goals,
@@ -535,10 +563,14 @@ def tournament_results(request, tournament_id):
                        'pool_c_teams': pool_c_teams, 'pool_d_teams': pool_d_teams}
             return render(request, 'tournaments/sixteen_team_tournament_results.html', context)
         elif number_of_teams == 20:
-            pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A')
-            pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B')
-            pool_c_games = tournament.pool_play_games.filter(pool__name='Pool C')
-            pool_d_games = tournament.pool_play_games.filter(pool__name='Pool D')
+            pool_a_games = tournament.pool_play_games.filter(pool__name='Pool A').order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+            pool_b_games = tournament.pool_play_games.filter(pool__name='Pool B').order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+            pool_c_games = tournament.pool_play_games.filter(pool__name='Pool C').order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
+            pool_d_games = tournament.pool_play_games.filter(pool__name='Pool D').order_by('-pool_play_wins',
+                                                                                                  '-pool_play_point_differential')
             pool_a = TournamentPool.objects.get(tournament=tournament, name='Pool A')
             pool_b = TournamentPool.objects.get(tournament=tournament, name='Pool B')
             pool_c = TournamentPool.objects.get(tournament=tournament, name='Pool C')
@@ -574,6 +606,7 @@ def get_context_for_tournament_results(tournament_id):
             'pool_play_point_differential': team.pool_play_point_differential
         }
         teams_stats.append(team_stats)
+
     top_assists = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('assists').desc())[:3]
     top_goals = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('goals').desc())[:3]
     top_throwaways = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(F('throwaways').desc())[:3]
@@ -581,6 +614,7 @@ def get_context_for_tournament_results(tournament_id):
         F('throwing_yards').desc())[:3]
     top_receiving_yards = PlayerTournamentStat.objects.filter(tournament=tournament).order_by(
         F('receiving_yards').desc())[:3]
+
     context = {'tournament': tournament, 'teams_stats': teams_stats, 'top_assists': top_assists,
                'top_goals': top_goals,
                'top_throwaways': top_throwaways, 'top_throwing_yards': top_throwing_yards,

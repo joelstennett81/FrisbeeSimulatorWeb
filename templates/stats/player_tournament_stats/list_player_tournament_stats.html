@@ -21,7 +21,7 @@
                 {% for playerTournamentStat in playerTournamentStats %}
                     <tr>
                         <td>
-                            <a href="{% url 'detail_player_tournament_stats' playerTournamentStat.tournament.id playerTournamentStat.player.id %}">{{ playerTournamentStat.player }}</a>
+                            <a href="{% url 'detail_player_tournament_stats' playerTournamentStat.tournament.id playerTournamentStat.player.id %}">{{ playerTournamentStat.player }} ({{ playerTournamentStat.team }})</a>
                         </td>
                         <td>{{ playerTournamentStat.goals }}</td>
                         <td>{{ playerTournamentStat.assists }}</td>

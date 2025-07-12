@@ -1,0 +1,18 @@
+<div class="card mb-4">
+    <div class="card-header">Pool {{ pool_letter }} Games</div>
+    <ul class="list-group list-group-flush">
+        {% for game in pool_games %}
+            {% if game.is_completed %}
+                <a href="{% url 'detail_game' game.id %}">
+                    <strong>{{ game.winner }}</strong> {{ game.winner_score }} - {{ game.loser }} {{ game.loser_score }}
+                </a>
+            {% else %}
+                <li class="list-group-item" id="game-{{ game.id }}">
+                    {{ game.team_one }} vs {{ game.team_two }}
+                </li>
+            {% endif %}
+        {% empty %}
+            <li class="list-group-item">No games yet</li>
+        {% endfor %}
+    </ul>
+</div>
