@@ -29,6 +29,25 @@ def create_individual_game(request):
         form = GameForm(request=request)
     return render(request, 'games/create_individual_game.html', {'form': form})
 
+@login_required(login_url='/login/')
+def create_individual_ufa_game(request):
+    if request.method == 'POST':
+        form = GameForm(request.POST, request=request)
+        if form.is_valid():
+            game = form.save(commit=False)
+            game.created_by = request.user.profile
+            game.game_type = 'UFA'
+            game.save()
+            tournament, created = Tournament.objects.get_or_create(name='Fake Tournament')
+            TournamentTeam.objects.create(team=game.team_one.team, tournament=tournament, pool_play_seed=1,
+                                          bracket_play_seed=1)
+            TournamentTeam.objects.create(team=game.team_two.team, tournament=tournament, pool_play_seed=2,
+                                          bracket_play_seed=2)
+            return redirect('ufa_games_list')
+    else:
+        form = GameForm(request=request)
+    return render(request, 'ufa_games/create_individual_ufa_game.html', {'form': form})
+
 
 def simulate_individual_game(request, game_id):
     game = Game.objects.get(id=game_id)
@@ -61,7 +80,29 @@ def simulate_individual_game(request, game_id):
     return redirect(reverse('detail_game', kwargs={'pk': game.id}))
 
 
+def simulate_individual_ufa_game(request, game_id):
+    game = Game.objects.get(id=game_id)
+    gameSimulation = GameSimulation(tournament=None, game=game)
+    gameSimulation.coin_flip()
+    gameSimulation.simulate_full_ufa_game()
+    if gameSimulation.winner == gameSimulation.teamInGameSimulationOne:
+        game.winner = gameSimulation.teamInGameSimulationOne.tournamentTeam
+        game.loser = gameSimulation.teamInGameSimulationTwo.tournamentTeam
+    else:
+        game.winner = gameSimulation.teamInGameSimulationTwo.tournamentTeam
+        game.loser = gameSimulation.teamInGameSimulationOne.tournamentTeam
+    game.created_by = request.user.profile
+    game.is_completed = True
+    game.save()
+    return redirect(reverse('detail_game', kwargs={'pk': game.id}))
+
+
 @login_required(login_url='/login/')
 def games_list(request):
     games = Game.objects.filter(game_type='Exhibition', created_by=request.user.profile)
     return render(request, 'games/games_list.html', {'games': games})
+
+@login_required(login_url='/login/')
+def ufa_games_list(request):
+    games = Game.objects.filter(game_type='UFA', created_by=request.user.profile)
+    return render(request, 'ufa_games/ufa_games_list.html', {'games': games})

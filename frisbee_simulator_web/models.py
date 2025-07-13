@@ -244,7 +244,8 @@ class Game(models.Model):
         ('17th-Place Semifinal', '17th-Place Semifinal'),
         ('17th-Place Final', '17th-Place Final'),
         ('19th-Place Final', '19th-Place Final'),
-        ('Exhibition', 'Exhibition')
+        ('Exhibition', 'Exhibition'),
+        ('UFA', 'UFA')
     ]
     date = models.DateTimeField(default=timezone.now)
     team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_games')

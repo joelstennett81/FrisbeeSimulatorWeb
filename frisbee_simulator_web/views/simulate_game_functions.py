@@ -105,8 +105,22 @@ class GameSimulation:
         self.pointSimulation = None
         self.isStartOfFirstHalf = None
         self.isStartOfSecondHalf = None
+        self.isFirstQuarter = None
+        self.isSecondQuarter = None
+        self.isThirdQuarter = None
+        self.isFourthQuarter = None
+        self.isOvertime = None
+
+        self.isStartOfFirstQuarter = None
+        self.isStartOfSecondQuarter = None
+        self.isStartOfThirdQuarter = None
+        self.isStartOfFourthQuarter = None
+        self.isStartOfOvertime = None
         self.playDirectionCoinFlipResult = None
         self.startWithDiscCoinFlipResult = None
+        self.quarter = None
+        self.total_game_time = 0
+
         self.teamInGameSimulationOne = TeamInGameSimulation(self.game.team_one, self.game)
         self.teamInGameSimulationTwo = TeamInGameSimulation(self.game.team_two, self.game)
         self.tournamentTeamOne = self.teamInGameSimulationOne.tournamentTeam
@@ -173,6 +187,26 @@ class GameSimulation:
         self.point.save()
         self.point = None
 
+    def simulate_ufa_point(self, current_quarter, total_game_time):
+        if not self.isStartOfFirstHalf and not self.isStartOfSecondHalf:
+            self.point = Point.objects.create(game=self.game, team_one=self.teamInGameSimulationOne.tournamentTeam,
+                                              team_two=self.teamInGameSimulationTwo.tournamentTeam,
+                                              point_number_in_game=self.pointCounter)
+            self.point.save()
+            self.pointSimulation = PointSimulation(self.game, self.point, self.teamInGameSimulationOne,
+                                                   self.teamInGameSimulationTwo)
+        self.pointSimulation.playDirection = self.playDirection
+        time_of_point = self.pointSimulation.simulate_ufa_point(current_quarter, total_game_time)
+        self.pointSimulationsList.append(self.pointSimulation)
+        self.point.print_statements = self.pointSimulation.pointPrintStatement
+        self.point.team_one_score_post_point = self.teamInGameSimulationOne.score
+        self.point.team_two_score_post_point = self.teamInGameSimulationTwo.score
+        self.point.winner = self.pointSimulation.pointWinner
+        self.point.loser = self.pointSimulation.pointLoser
+        self.point.save()
+        self.point = None
+        return time_of_point
+
     def simulate_full_game(self):
         self.pointCounter = 1
         self.setup_first_point_of_first_half()
@@ -198,6 +232,72 @@ class GameSimulation:
             self.isStartOfSecondHalf = False
         self.save_player_game_stats_in_database()
 
+    def simulate_full_ufa_game(self):
+        self.pointCounter = 1
+        self.setup_first_point_of_period(1)
+        self.isFirstHalf = True
+        self.isSecondHalf = False
+        self.quarter = 1
+        while not self.gameOver:
+            point_time = self.simulate_ufa_point(self.total_game_time, self.quarter)
+            print('point time: ', point_time)
+            self.total_game_time += point_time
+            print('game time: ', self.total_game_time)
+            print('quarter: ', self.quarter)
+            if (self.quarter == 1) and (self.total_game_time > 720):
+                print('reached end of first quarter')
+                self.total_game_time = 720
+                self.isFirstQuarter = False
+                self.isSecondQuarter = True
+                self.isStartOfSecondQuarter = True
+                self.setup_first_point_of_period(2)
+            elif (self.quarter == 2) and (self.total_game_time > 720):
+                self.total_game_time = 1440
+                self.isSecondQuarter = False
+                self.isThirdQuarter = True
+                self.isStartOfThirdQuarter = True
+                self.isStartOfFirstHalf = False
+                self.isStartOfSecondHalf = True
+                self.setup_first_point_of_period(3)
+            elif (self.quarter == 3) and (self.total_game_time > 720):
+                self.total_game_time = 2160
+                self.isThirdQuarter = False
+                self.isFourthQuarter = True
+                self.isStartOfFourthQuarter = True
+                self.setup_first_point_of_period(4)
+            elif (self.quarter == 4) and (self.total_game_time > 720):
+                self.total_game_time = 2880
+                self.isSecondQuarter = False
+                self.isThirdQuarter = True
+                if self.teamInGameSimulationOne.score == self.teamInGameSimulationTwo.score:
+                    self.isFourthQuarter = False
+                    self.isOvertime = True
+                    self.isStartOfFirstHalf = False
+                    self.isStartOfSecondHalf = False
+                    self.isStartOfOvertime = True
+                    self.setup_first_point_of_period(5)
+                else:
+                    if self.teamInGameSimulationOne.score > self.teamInGameSimulationTwo.score:
+                        self.winner = self.teamInGameSimulationOne.tournamentTeam
+                        self.loser = self.teamInGameSimulationTwo.tournamentTeam
+                        self.game.winner_score = self.teamInGameSimulationOne.score
+                        self.game.loser_score = self.teamInGameSimulationTwo.score
+                        self.gameOver = True
+                    else:
+                        self.winner = self.teamInGameSimulationTwo.tournamentTeam
+                        self.loser = self.teamInGameSimulationOne.tournamentTeam
+                        self.game.winner_score = self.teamInGameSimulationTwo.score
+                        self.game.loser_score = self.teamInGameSimulationOne.score
+                        self.gameOver = True
+            else:
+                print('setting up next point')
+                self.setup_next_ufa_point()
+            self.isStartOfFirstHalf = False
+            self.isStartOfSecondHalf = False
+            self.isStartOfFourthQuarter = False
+            self.isStartOfOvertime = False
+        self.save_player_game_stats_in_database()
+
     def flip_play_direction(self):
         if self.playDirection == 1:
             newPlayDirection = -1
@@ -220,6 +320,19 @@ class GameSimulation:
         elif self.pointWinner == self.teamInGameSimulationTwo:
             self.teamInGameSimulationOne.startPointWithDisc = True
             self.teamInGameSimulationTwo.startPointWithDisc = False
+        self.flip_play_direction()
+        self.pointCounter += 1
+
+    def setup_next_ufa_point(self):
+        print('winner: ', self.pointWinner)
+        if self.pointWinner == self.teamInGameSimulationOne:
+            self.teamInGameSimulationOne.startPointWithDisc = False
+            self.teamInGameSimulationTwo.startPointWithDisc = True
+        elif self.pointWinner == self.teamInGameSimulationTwo:
+            self.teamInGameSimulationOne.startPointWithDisc = True
+            self.teamInGameSimulationTwo.startPointWithDisc = False
+        else:
+            print('point ended on time, not score')
         self.flip_play_direction()
         self.pointCounter += 1
 
@@ -255,6 +368,72 @@ class GameSimulation:
             self.pointSimulation.discPrePullLocation = 0
             self.pointSimulation.discCurrentLocation = 0
             self.pointSimulation.discPostGoalLocation = 0
+
+    def setup_first_point_of_period(self, period_number):
+        print('setting up first point of period: ', period_number)
+        # Reset all flags
+        self.quarter = period_number
+        self.isFirstQuarter = period_number == 1
+        self.isSecondQuarter = period_number == 2
+        self.isThirdQuarter = period_number == 3
+        self.isFourthQuarter = period_number == 4
+        self.isOvertime = period_number == 5
+
+        self.isStartOfFirstQuarter = period_number == 1
+        self.isStartOfSecondQuarter = period_number == 2
+        self.isStartOfThirdQuarter = period_number == 3
+        self.isStartOfFourthQuarter = period_number == 4
+        self.isStartOfOvertime = period_number == 5
+
+        self.total_game_time = 0
+
+        # Decide which team starts with disc this period
+        if period_number in (1, 4, 5):
+            team_with_disc = self.teamWithDiscToStartFirstHalf
+            team_without_disc = self.teamWithDiscToStartSecondHalf
+        else:  # period 2 or 3
+            team_with_disc = self.teamWithDiscToStartSecondHalf
+            team_without_disc = self.teamWithDiscToStartFirstHalf
+
+        team_with_disc.startPointWithDisc = True
+        team_with_disc.hasDisc = True
+        team_without_disc.startPointWithDisc = False
+        team_without_disc.hasDisc = False
+
+        # Set half possession flags
+        team_with_disc.startFirstHalfWithDisc = period_number in (1, 4, 5)
+        team_with_disc.startSecondHalfWithDisc = period_number == 3
+        team_without_disc.startFirstHalfWithDisc = not team_with_disc.startFirstHalfWithDisc
+        team_without_disc.startSecondHalfWithDisc = not team_with_disc.startSecondHalfWithDisc
+
+        # Save game and create point
+        self.game.save()
+        self.point = Point.objects.create(
+            game=self.game,
+            team_one=self.tournamentTeamOne,
+            team_two=self.tournamentTeamTwo,
+            point_number_in_game=self.pointCounter
+        )
+        self.point.save()
+
+        self.pointSimulation = PointSimulation(
+            self.game, self.point,
+            self.teamInGameSimulationOne, self.teamInGameSimulationTwo
+        )
+
+        # Set disc locations based on play direction
+        if self.firstPointOfGamePlayDirection == 1:
+            self.playDirection = 1
+            self.pointSimulation.discPrePullLocation = 80
+            self.pointSimulation.discCurrentLocation = 80
+            self.pointSimulation.discPostGoalLocation = 80
+        else:
+            self.playDirection = -1
+            self.pointSimulation.discPrePullLocation = 0
+            self.pointSimulation.discCurrentLocation = 0
+            self.pointSimulation.discPostGoalLocation = 0
+
+        self.setup_next_ufa_point()
 
     def setup_first_point_of_second_half(self):
         self.isFirstHalf = False
