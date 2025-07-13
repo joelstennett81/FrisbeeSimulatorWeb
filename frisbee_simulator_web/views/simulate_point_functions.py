@@ -142,7 +142,7 @@ class PointSimulation:
         self.throwStartingProbability = None
         self.teamInPointSimulationOne = TeamInPointSimulation(self.point.team_one, self.point,
                                                               self.teamInGameSimulationOne)
-        self.teamInPointSimulationTwo = TeamInPointSimulation(self.point.team_one, self.point,
+        self.teamInPointSimulationTwo = TeamInPointSimulation(self.point.team_two, self.point,
                                                               self.teamInGameSimulationTwo)
         self.sevenOnFieldForTeamOne = None
         self.sevenOnFieldForTeamTwo = None
@@ -203,17 +203,28 @@ class PointSimulation:
         else:
             print('neither team starts with disc')
 
+
     def put_correct_players_on_field(self):
+        use_bench_dline = (random.randint(1, 3) == 1)  # 1-in-3 chance to use bench
+
         if self.teamInPointSimulationOne.startPointWithDisc:
             self.teamInPointSimulationOne.sevenOnField = self.teamInPointSimulationOne.oLinePlayers
-            self.teamInPointSimulationTwo.sevenOnField = self.teamInPointSimulationTwo.dLinePlayers
+            self.teamInPointSimulationTwo.sevenOnField = (
+                self.teamInPointSimulationTwo.benchPlayers if use_bench_dline
+                else self.teamInPointSimulationTwo.dLinePlayers
+            )
             self.sevenOnFieldForOffense = self.teamInPointSimulationOne.sevenOnField
             self.sevenOnFieldForDefense = self.teamInPointSimulationTwo.sevenOnField
+
         elif self.teamInPointSimulationTwo.startPointWithDisc:
-            self.teamInPointSimulationOne.sevenOnField = self.teamInPointSimulationOne.dLinePlayers
+            self.teamInPointSimulationOne.sevenOnField = (
+                self.teamInPointSimulationOne.benchPlayers if use_bench_dline
+                else self.teamInPointSimulationOne.dLinePlayers
+            )
             self.teamInPointSimulationTwo.sevenOnField = self.teamInPointSimulationTwo.oLinePlayers
             self.sevenOnFieldForOffense = self.teamInPointSimulationTwo.sevenOnField
             self.sevenOnFieldForDefense = self.teamInPointSimulationOne.sevenOnField
+
         else:
             print('error with correct players on field')
 
@@ -475,8 +486,6 @@ class PointSimulation:
                 self.playerBeingThrownTo.gameStats.receivingYards += self.randomYardsThrown
                 self.playerWithDisc = self.playerBeingThrownTo
                 self.playerGuardingDisc = self.playerGuardingPlayerBeingThrownTo
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' completed ' + str(
-                self.throwChoice) + ' at this location: ' + str(self.discCurrentLocation) + '\n')
         else:
             self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' dropped the throw \n')
             # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
@@ -526,21 +535,23 @@ class PointSimulation:
 
     def switch_teams_due_to_turnover(self):
         if self.teamOnOffenseCurrently == self.teamInPointSimulationOne:
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc \n')
             self.teamOnOffenseCurrently = self.teamInPointSimulationTwo
             self.teamOnDefenseCurrently = self.teamInPointSimulationOne
             self.sevenOnFieldForOffense = self.teamInPointSimulationTwo.sevenOnField
             self.sevenOnFieldForDefense = self.teamInPointSimulationOne.sevenOnField
             self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
             self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
-        else:
             self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc \n')
+        else:
             self.teamOnOffenseCurrently = self.teamInPointSimulationOne
             self.teamOnDefenseCurrently = self.teamInPointSimulationTwo
             self.sevenOnFieldForOffense = self.teamInPointSimulationOne.sevenOnField
             self.sevenOnFieldForDefense = self.teamInPointSimulationTwo.sevenOnField
             self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
             self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
+            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc \n')
+        print('after switch offense: ', self.teamOnOffenseCurrently)
+        print('after switch defense: ', self.teamOnDefenseCurrently)
         self.flip_play_direction()
 
     def flip_play_direction(self):
