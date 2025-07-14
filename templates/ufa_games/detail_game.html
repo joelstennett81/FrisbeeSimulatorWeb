@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">Game Details</h1>
+        <div class="card mb-4">
+            <div class="card-header">Game Information</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    Team One: {{ game.team_one.team }}
+                </li>
+                <li class="list-group-item">
+                    Team Two: {{ game.team_two.team }}
+                </li>
+                <li class="list-group-item">
+                    Winner: {{ game.winner.team }}
+                </li>
+                <!-- Add more game details as needed -->
+            </ul>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">What happened during game:</div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Point Number</th>
+                    <th scope="col">Score Post Point</th>
+                    <th scope="col">Details</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for point in game.ufa_game_points.all %}
+                    <tr>
+                        <td>{{ point.point_number_in_game }}</td>
+                        <td>{{ point.team_one_score_post_point }}-{{ point.team_two_score_post_point }}</td>
+                        <td><a href="{% url 'ufa_detail_point' point.id %}">Details</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}

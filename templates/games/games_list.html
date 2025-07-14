@@ -2,8 +2,8 @@
 
 {% block content %}
     <div class="container py-4">
-        <h1 class="mb-4">UFA Games</h1>
-        <a href="{% url 'create_individual_ufa_game' %}" class="btn btn-primary mb-4">Create UFA Game</a>
+        <h1 class="mb-4">USAU Games</h1>
+        <a href="{% url 'create_individual_game' %}" class="btn btn-primary mb-4">Create UFA Game</a>
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
                 <thead class="thead-dark">
@@ -32,10 +32,10 @@
                         <td>{{ game.winner_score }} - {{ game.loser_score }}</td>
                         <td>
                             {% if not game.is_completed %}
-                                <a href="{% url 'simulate_individual_ufa_game' game.id %}" class="btn btn-secondary">Simulate
+                                <a href="{% url 'simulate_individual_game' game.id %}" class="btn btn-secondary">Simulate
                                     Game</a>
                             {% else %}
-                                <a href="{% url 'detail_ufa_game' game.id %}" class="btn btn-info">View Details</a>
+                                <a href="{% url 'detail_game' game.id %}" class="btn btn-info">View Details</a>
                             {% endif %}
                         </td>
                     </tr>

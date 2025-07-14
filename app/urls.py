@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users, games
+from frisbee_simulator_web.views import players, teams, tournaments, home, stats, users, games, ufa_seasons
 from frisbee_simulator_web.views.about import AboutPageView
 from frisbee_simulator_web.views.players import PlayerUpdateView
 from frisbee_simulator_web.views.tournaments import TournamentDeleteView
@@ -80,4 +80,6 @@ urlpatterns = [
     path('games/create_individual_ufa_game/', games.create_individual_ufa_game, name='create_individual_ufa_game'),
     path('games/games_list/', games.games_list, name='games_list'),
     path('games/ufa_games_list/', games.ufa_games_list, name='ufa_games_list'),
+    path('games/ufa_detail/<int:pk>/', ufa_seasons.detail_game, name='ufa_detail_game'),
+    path('points/ufa_detail/<int:pk>/', ufa_seasons.detail_point, name='ufa_detail_point'),
 ]

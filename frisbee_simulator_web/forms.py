@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import models
 from django_select2.forms import Select2MultipleWidget
 
-from .models import Player, Team, Tournament, Profile, Game, TournamentTeam
+from .models import *
 from .views.misc import calculate_overall_team_rating, calculate_overall_player_rating, calculate_handle_offense_rating, \
     calculate_handle_defense_rating, calculate_cutter_offense_rating, calculate_cutter_defense_rating, \
     create_random_player
@@ -179,9 +179,32 @@ class GameForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         user_profile = self.request.user.profile
+        # Filter to only teams created by this user
+        self.fields['team_one'].queryset = Team.objects.filter(type='USAU')
+        self.fields['team_two'].queryset = Team.objects.filter(type='USAU')
 
     class Meta:
         model = Game
+        fields = ['team_one', 'team_two', 'date']
+
+
+class UFASeasonGameForm(forms.ModelForm):
+    is_public = forms.BooleanField(
+        required=False,
+        help_text="Do you want to allow other users to see and use this?"
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+        user_profile = self.request.user.profile
+        # Filter to only teams created by this user
+        season = UFASeason.objects.filter(year=2024).first()
+        self.fields['team_one'].queryset = UFASeasonTeam.objects.filter(season=season)
+        self.fields['team_two'].queryset = UFASeasonTeam.objects.filter(season=season)
+
+    class Meta:
+        model = UFASeasonGame
         fields = ['team_one', 'team_two', 'date']
 
 
