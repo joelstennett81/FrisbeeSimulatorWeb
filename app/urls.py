@@ -74,6 +74,10 @@ urlpatterns = [
          stats.detail_player_tournament_stats, name='detail_player_tournament_stats'),
     path('games/simulate_individual_game/<int:game_id>/', games.simulate_individual_game,
          name='simulate_individual_game'),
+    path('games/simulate_individual_ufa_game/<int:game_id>/', games.simulate_individual_ufa_game,
+         name='simulate_individual_ufa_game'),
     path('games/create_individual_game/', games.create_individual_game, name='create_individual_game'),
-    path('games/games_list/', games.games_list, name='games_list')
+    path('games/create_individual_ufa_game/', games.create_individual_ufa_game, name='create_individual_ufa_game'),
+    path('games/games_list/', games.games_list, name='games_list'),
+    path('games/ufa_games_list/', games.ufa_games_list, name='ufa_games_list'),
 ]
