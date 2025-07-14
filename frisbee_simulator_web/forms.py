@@ -168,8 +168,25 @@ class TournamentForm(forms.ModelForm):
             tournament.save()
         return tournament
 
-
 class GameForm(forms.ModelForm):
+    is_public = forms.BooleanField(
+        required=False,
+        help_text="Do you want to allow other users to see and use this?"
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        print('request: ', self.request)
+        super().__init__(*args, **kwargs)
+        user_profile = self.request.user.profile
+        # Filter to only teams created by this user
+        self.fields['team_one'].queryset = Team.objects.filter(type='USAU')
+        self.fields['team_two'].queryset = Team.objects.filter(type='USAU')
+
+    class Meta:
+        model = Game
+        fields = ['team_one', 'team_two', 'date']
+class UFAGameForm(forms.ModelForm):
     is_public = forms.BooleanField(
         required=False,
         help_text="Do you want to allow other users to see and use this?"
@@ -179,6 +196,9 @@ class GameForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
         user_profile = self.request.user.profile
+        # Filter to only teams created by this user
+        self.fields['team_one'].queryset = Team.objects.filter(type='UFA')
+        self.fields['team_two'].queryset = Team.objects.filter(type='UFA')
 
     class Meta:
         model = Game

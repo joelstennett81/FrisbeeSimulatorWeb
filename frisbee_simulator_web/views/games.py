@@ -3,7 +3,7 @@ from django.db.models import F
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse
 
-from frisbee_simulator_web.forms import GameForm
+from frisbee_simulator_web.forms import GameForm, UFAGameForm
 from frisbee_simulator_web.models import Game, TournamentTeam, Tournament
 from frisbee_simulator_web.views.simulate_game_functions import GameSimulation
 
@@ -32,20 +32,20 @@ def create_individual_game(request):
 @login_required(login_url='/login/')
 def create_individual_ufa_game(request):
     if request.method == 'POST':
-        form = GameForm(request.POST, request=request)
+        form = UFAGameForm(request.POST, request=request)
         if form.is_valid():
             game = form.save(commit=False)
             game.created_by = request.user.profile
             game.game_type = 'UFA'
             game.save()
             tournament, created = Tournament.objects.get_or_create(name='Fake Tournament')
-            TournamentTeam.objects.create(team=game.team_one.team, tournament=tournament, pool_play_seed=1,
+            TournamentTeam.objects.create(team=game.team_one, tournament=tournament, pool_play_seed=1,
                                           bracket_play_seed=1)
-            TournamentTeam.objects.create(team=game.team_two.team, tournament=tournament, pool_play_seed=2,
+            TournamentTeam.objects.create(team=game.team_two, tournament=tournament, pool_play_seed=2,
                                           bracket_play_seed=2)
             return redirect('ufa_games_list')
     else:
-        form = GameForm(request=request)
+        form = UFAGameForm(request=request)
     return render(request, 'ufa_games/create_individual_ufa_game.html', {'form': form})
 
 
