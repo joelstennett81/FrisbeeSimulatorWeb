@@ -240,12 +240,8 @@ class GameSimulation:
         self.quarter = 1
         while not self.gameOver:
             point_time = self.simulate_ufa_point(self.total_game_time, self.quarter)
-            print('point time: ', point_time)
             self.total_game_time += point_time
-            print('game time: ', self.total_game_time)
-            print('quarter: ', self.quarter)
             if (self.quarter == 1) and (self.total_game_time > 720):
-                print('reached end of first quarter')
                 self.total_game_time = 720
                 self.isFirstQuarter = False
                 self.isSecondQuarter = True
@@ -290,7 +286,6 @@ class GameSimulation:
                         self.game.loser_score = self.teamInGameSimulationOne.score
                         self.gameOver = True
             else:
-                print('setting up next point')
                 self.setup_next_ufa_point()
             self.isStartOfFirstHalf = False
             self.isStartOfSecondHalf = False
@@ -324,7 +319,6 @@ class GameSimulation:
         self.pointCounter += 1
 
     def setup_next_ufa_point(self):
-        print('winner: ', self.pointWinner)
         if self.pointWinner == self.teamInGameSimulationOne:
             self.teamInGameSimulationOne.startPointWithDisc = False
             self.teamInGameSimulationTwo.startPointWithDisc = True
@@ -370,7 +364,6 @@ class GameSimulation:
             self.pointSimulation.discPostGoalLocation = 0
 
     def setup_first_point_of_period(self, period_number):
-        print('setting up first point of period: ', period_number)
         # Reset all flags
         self.quarter = period_number
         self.isFirstQuarter = period_number == 1

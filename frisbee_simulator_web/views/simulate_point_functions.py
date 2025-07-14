@@ -273,10 +273,12 @@ class PointSimulation:
         else:
             random_start = random.randint(55, 80)
         self.discCurrentLocation = random_start
-        self.pointPrintStatement += ('The disc starts at: ' + str(self.discCurrentLocation) + 'yard line \n')
+        self.pointPrintStatement += ('The pull was caught at: ' + str(self.discCurrentLocation) + ' yard line \n')
 
     def determine_receiver_options(self):
-        self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' has the disc \n')
+        self.pointPrintStatement += (
+                str(self.playerWithDisc.player.last_name) + ' has the disc at this location: ' + str(
+            self.discCurrentLocation) + '\n')
         self.receiverOptions = []
         if self.playerWithDisc == self.sevenOnFieldForOffense[0]:
             if self.throwChoice == 'swing':
@@ -463,9 +465,9 @@ class PointSimulation:
         self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' tries to throw to: ' + str(
             self.playerBeingThrownTo.player.last_name) + ' for ' + str(
             self.randomYardsThrown) + 'yards \n')
+        self.discCurrentLocation += self.randomYardsThrown * self.playDirection
         if self.probabilityThrowIsCompleted < self.throwStartingProbability:
             # play direction is either positive or negative
-            self.discCurrentLocation += self.randomYardsThrown * self.playDirection
             self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' completed ' + str(
                 self.throwChoice) + ' at this location: ' + str(
                 self.discCurrentLocation) + '\n')
@@ -516,7 +518,9 @@ class PointSimulation:
                 self.playerWithDisc = self.playerBeingThrownTo
                 self.playerGuardingDisc = self.playerGuardingPlayerBeingThrownTo
         else:
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' dropped the throw \n')
+            self.pointPrintStatement += (
+                    str(self.teamOnOffenseCurrently.team.mascot) + ' dropped the throw at this location: at this location: ' + str(
+                self.discCurrentLocation) + '\n')
             # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
             # or way out of bounds
             if self.discCurrentLocation < -20:
@@ -528,8 +532,6 @@ class PointSimulation:
                 self.discCurrentLocation = 70
             elif self.discCurrentLocation > 90:
                 self.discCurrentLocation = 70
-            else:
-                self.discCurrentLocation += self.randomYardsThrown * self.playDirection
             # throw was either dropped or thrown away
             self.assign_drops()
             self.switch_teams_due_to_turnover()
@@ -628,8 +630,6 @@ class PointSimulation:
             # throw was either dropped or thrown away
             self.assign_drops()
             self.switch_teams_due_to_turnover()
-        print('point print statement: ', self.pointPrintStatement)
-        print('winner: ', self.pointWinner)
 
     def simulate_point_by_player_rating(self):
         # four pass options:
@@ -701,7 +701,9 @@ class PointSimulation:
             self.sevenOnFieldForDefense = self.teamInPointSimulationOne.sevenOnField
             self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
             self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc \n')
+            self.pointPrintStatement += (
+                    str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc at this location: ' + str(
+                self.discCurrentLocation) + '\n')
         else:
             self.teamOnOffenseCurrently = self.teamInPointSimulationOne
             self.teamOnDefenseCurrently = self.teamInPointSimulationTwo
@@ -709,7 +711,9 @@ class PointSimulation:
             self.sevenOnFieldForDefense = self.teamInPointSimulationTwo.sevenOnField
             self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
             self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc \n')
+            self.pointPrintStatement += (
+                    str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc at this location: ' + str(
+                self.discCurrentLocation) + '\n')
         self.flip_play_direction()
 
     def flip_play_direction(self):
