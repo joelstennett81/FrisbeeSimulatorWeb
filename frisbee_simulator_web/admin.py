@@ -33,7 +33,8 @@ def fetch_and_update_players(modeladmin, request, queryset):
 
             for api_team in teams:
                 team = UFATeam.objects.get(ufa_id=api_team['teamID'])
-                player_team, player_team_created = UFAPlayerTeam.objects.update_or_create(team=team, player=player, is_active=True,
+                player_team, player_team_created = UFAPlayerTeam.objects.update_or_create(team=team, player=player,
+                                                                                          is_active=True,
                                                                                           defaults={
                                                                                               "year": api_team['year'],
                                                                                               "jersey_number": api_team[
@@ -224,7 +225,8 @@ def create_teams_from_ufa_teams(modeladmin, request, queryset):
             location=ufa_team.city,
             mascot=ufa_team.name,
             type="UFA",
-            is_public=True
+            is_public=True,
+            year=ufa_team.year
         )
 
         # Get UFA players on that team
@@ -242,6 +244,19 @@ def create_teams_from_ufa_teams(modeladmin, request, queryset):
         # Assign to the team
         team.players.set(matched_players)
         team.save()
+
+
+def setup_2024_ufa_season(modeladmin, request, queryset):
+    ufa_teams = UFATeam.objects.filter(year=2024)
+    season, created = UFASeason.objects.update_or_create(name='2024 Season', year=2024, number_of_teams=24)
+
+    for ufa_team in ufa_teams:
+        api_team = Team.objects.get(year=2024, location=ufa_team.city, mascot=ufa_team.name)
+        team, created = UFASeasonTeam.objects.update_or_create(
+            team=api_team,
+            season=season,
+            division=ufa_team.division,
+        )
 
 
 def assign_primary_lines_for_team(team):
@@ -317,7 +332,6 @@ def assign_primary_lines_for_team(team):
 def update_team_lines(modeladmin, request, queryset):
     from .views.misc import calculate_overall_team_rating
     for team in Team.objects.all():
-        print('team: ', team)
         assign_primary_lines_for_team(team)
         team.overall_rating = calculate_overall_team_rating(team)
         team.save()
@@ -517,6 +531,25 @@ class TeamAdmin(admin.ModelAdmin):
         'bench_players'
     )
     actions = [create_teams_from_ufa_teams, update_team_lines]
+
+
+@admin.register(UFASeason)
+class UFASeasonAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'year', 'number_of_teams',
+    )
+    list_filter = ('year',)
+    search_fields = ('name',)
+    actions = [setup_2024_ufa_season]
+
+
+@admin.register(UFASeasonTeam)
+class UFASeasonTeamAdmin(admin.ModelAdmin):
+    list_display = (
+        'team', 'season', 'division',
+    )
+    list_filter = ('team', 'season', 'division')
+    search_fields = ('team',)
 
 
 @admin.action(description="Setup All UFA Simulation Data")

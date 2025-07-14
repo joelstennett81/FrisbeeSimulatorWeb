@@ -224,6 +224,4 @@ def calculate_cutter_defense_rating(player):
 
 def calculate_overall_team_rating(team):
     overall_rating = team.players.all().aggregate(Avg('overall_rating')).get('overall_rating__avg')
-    print('team players: ', team.players.all())
-    print('overall rating: ', overall_rating)
     return overall_rating

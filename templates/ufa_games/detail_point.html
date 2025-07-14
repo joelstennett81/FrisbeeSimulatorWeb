@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-4">
+        <h1 class="mb-4">Point Details</h1>
+        <div class="card mb-4">
+            <div class="card-header">Point Information</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    Point Number: {{ point.point_number_in_game }}
+                </li>
+                <li class="list-group-item">
+                    Score After Point: {{ point.team_one_score_post_point }}-{{ point.team_two_score_post_point }}
+                </li>
+                <li class="list-group-item">
+                    What Happened During Point:
+                    <pre>{{ point.print_statements|linebreaks }}</pre>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

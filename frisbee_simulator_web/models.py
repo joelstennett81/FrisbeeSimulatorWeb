@@ -285,6 +285,52 @@ class Game(models.Model):
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
 
 
+class UFASeason(models.Model):
+    SIMULATION_TYPE_CHOICES = [
+        ('player_rating', 'player_rating'),
+        ('team_rating', 'team_rating')
+    ]
+    name = models.CharField(max_length=50)
+    year = models.IntegerField(validators=[MinValueValidator(1950), MaxValueValidator(2100)])
+    number_of_teams = models.PositiveIntegerField(default=24)
+    simulation_type = models.CharField(choices=SIMULATION_TYPE_CHOICES, default='player_rating')
+    teams = models.ManyToManyField(Team, related_name='teams_season')
+    champion = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True, null=True)
+    is_complete = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=False)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
+
+
+class UFASeasonTeam(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    season = models.ForeignKey(UFASeason, on_delete=models.CASCADE)
+    division = models.ForeignKey('UFADivision', on_delete=models.CASCADE)
+    regular_season_wins = models.PositiveIntegerField(default=0)
+    regular_season_losses = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.team.location + ' ' + self.team.mascot
+
+
+class UFASeasonGame(models.Model):
+    GAME_TYPE_CHOICES = [
+        ('Exhibition', 'Exhibition'),
+        ('Regular Season', 'Regular Season')
+    ]
+    date = models.DateTimeField(default=timezone.now)
+    team_one = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='team_one_games')
+    team_two = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='team_two_games')
+    game_type = models.CharField(max_length=50, choices=GAME_TYPE_CHOICES, default='Exhibition')
+    winner = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='winner_games', null=True)
+    loser = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='loser_games', null=True)
+    winner_score = models.PositiveIntegerField(default=0)
+    loser_score = models.PositiveIntegerField(default=0)
+    is_completed = models.BooleanField(default=False)
+    is_public = models.BooleanField(default=False)
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
+    season = models.ForeignKey(UFASeason, on_delete=models.CASCADE, blank=True, null=True)
+
+
 class Point(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='game_points')
     team_one = models.ForeignKey(TournamentTeam, on_delete=models.CASCADE, related_name='team_one_points')
@@ -296,11 +342,44 @@ class Point(models.Model):
     team_one_score_post_point = models.IntegerField(default=0)
     team_two_score_post_point = models.IntegerField(default=0)
 
+class UFAPoint(models.Model):
+    game = models.ForeignKey(UFASeasonGame, on_delete=models.CASCADE, related_name='ufa_game_points')
+    team_one = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='ufa_team_one_points')
+    team_two = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='ufa_team_two_points')
+    winner = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='ufa_winner_points', null=True)
+    loser = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='ufa_loser_points', null=True)
+    point_number_in_game = models.PositiveIntegerField(default=0)
+    print_statements = models.CharField(max_length=50000, null=True)
+    team_one_score_post_point = models.IntegerField(default=0)
+    team_two_score_post_point = models.IntegerField(default=0)
+
 
 class PlayerPointStat(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='point_stats_for_game')
     point = models.ForeignKey(Point, on_delete=models.CASCADE, related_name='player_stats')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='point_stats')
+    goals = models.PositiveIntegerField(default=0)
+    assists = models.PositiveIntegerField(default=0)
+    swing_passes_thrown = models.PositiveIntegerField(default=0)
+    swing_passes_completed = models.PositiveIntegerField(default=0)
+    under_passes_thrown = models.PositiveIntegerField(default=0)
+    under_passes_completed = models.PositiveIntegerField(default=0)
+    short_hucks_thrown = models.PositiveIntegerField(default=0)
+    short_hucks_completed = models.PositiveIntegerField(default=0)
+    deep_hucks_thrown = models.PositiveIntegerField(default=0)
+    deep_hucks_completed = models.PositiveIntegerField(default=0)
+    throwing_yards = models.IntegerField(default=0)
+    receiving_yards = models.IntegerField(default=0)
+    turnovers_forced = models.PositiveIntegerField(default=0)
+    throwaways = models.PositiveIntegerField(default=0)
+    drops = models.PositiveIntegerField(default=0)
+    callahans = models.PositiveIntegerField(default=0)
+    pulls = models.PositiveIntegerField(default=0)
+
+class UFAPlayerPointStat(models.Model):
+    game = models.ForeignKey(UFASeasonGame, on_delete=models.CASCADE, related_name='ufa_point_stats_for_game')
+    point = models.ForeignKey(UFAPoint, on_delete=models.CASCADE, related_name='ufa_player_stats')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='ufa_point_stats')
     goals = models.PositiveIntegerField(default=0)
     assists = models.PositiveIntegerField(default=0)
     swing_passes_thrown = models.PositiveIntegerField(default=0)
@@ -344,10 +423,58 @@ class PlayerGameStat(models.Model):
     pulls = models.PositiveIntegerField(default=0)
 
 
+class UFAPlayerGameStat(models.Model):
+    season = models.ForeignKey(UFASeason, on_delete=models.CASCADE, related_name='ufa_game_stats_for_season',
+                               null=True)
+    game = models.ForeignKey(UFASeasonGame, on_delete=models.CASCADE, related_name='ufa_player_stats')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='ufa_game_stats')
+    goals = models.PositiveIntegerField(default=0)
+    assists = models.PositiveIntegerField(default=0)
+    swing_passes_thrown = models.PositiveIntegerField(default=0)
+    swing_passes_completed = models.PositiveIntegerField(default=0)
+    under_passes_thrown = models.PositiveIntegerField(default=0)
+    under_passes_completed = models.PositiveIntegerField(default=0)
+    short_hucks_thrown = models.PositiveIntegerField(default=0)
+    short_hucks_completed = models.PositiveIntegerField(default=0)
+    deep_hucks_thrown = models.PositiveIntegerField(default=0)
+    deep_hucks_completed = models.PositiveIntegerField(default=0)
+    throwing_yards = models.IntegerField(default=0)
+    receiving_yards = models.IntegerField(default=0)
+    turnovers_forced = models.PositiveIntegerField(default=0)
+    throwaways = models.PositiveIntegerField(default=0)
+    drops = models.PositiveIntegerField(default=0)
+    callahans = models.PositiveIntegerField(default=0)
+    pulls = models.PositiveIntegerField(default=0)
+
+
 class PlayerTournamentStat(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='player_stats')
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='tournament_stats')
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='player_tournament_stats', blank=True,
+                             null=True)
+    goals = models.PositiveIntegerField(default=0)
+    assists = models.PositiveIntegerField(default=0)
+    swing_passes_thrown = models.PositiveIntegerField(default=0)
+    swing_passes_completed = models.PositiveIntegerField(default=0)
+    under_passes_thrown = models.PositiveIntegerField(default=0)
+    under_passes_completed = models.PositiveIntegerField(default=0)
+    short_hucks_thrown = models.PositiveIntegerField(default=0)
+    short_hucks_completed = models.PositiveIntegerField(default=0)
+    deep_hucks_thrown = models.PositiveIntegerField(default=0)
+    deep_hucks_completed = models.PositiveIntegerField(default=0)
+    throwing_yards = models.IntegerField(default=0)
+    receiving_yards = models.IntegerField(default=0)
+    turnovers_forced = models.PositiveIntegerField(default=0)
+    throwaways = models.PositiveIntegerField(default=0)
+    drops = models.PositiveIntegerField(default=0)
+    callahans = models.PositiveIntegerField(default=0)
+    pulls = models.PositiveIntegerField(default=0)
+
+
+class UFAPlayerSeasonStat(models.Model):
+    season = models.ForeignKey(UFASeason, on_delete=models.CASCADE, related_name='ufa_player_stats')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='ufa_season_stats')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='ufa_player_season_stats', blank=True,
                              null=True)
     goals = models.PositiveIntegerField(default=0)
     assists = models.PositiveIntegerField(default=0)
