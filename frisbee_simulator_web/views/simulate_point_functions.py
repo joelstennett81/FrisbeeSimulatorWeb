@@ -168,9 +168,7 @@ class PointSimulation:
         self.simulationType = 'player_rating'
         self.oLineOnField = None
         self.dLineOnField = None
-        self.discPrePullLocation = None
         self.discCurrentLocation = None
-        self.discPostGoalLocation = None
         self.playDirection = None  # Positive means going from 0-> 70, Negative means going from 0<-70
         self.teamWithDiscToStartGame = None
         self.pointPrintStatement = ''
@@ -180,32 +178,14 @@ class PointSimulation:
         if self.simulationType == 'player_rating':
             self.put_correct_players_on_field()
             self.determine_starting_disc_location_before_pull()
-            self.determine_who_catches_pull()
             self.determine_where_pull_is_caught()
+            self.determine_who_catches_pull()
             self.simulate_point_by_player_rating()
             self.save_player_point_stats_in_database(self.game)
         else:
             self.calculate_difference_in_teams_overall_rating()
             self.calculate_probability_for_winner()
             self.simulate_point_by_team_rating()
-
-    def simulate_ufa_point(self, quarter, game_time):
-        point_time = 0
-        self.determine_who_starts_point_with_disc()
-        if self.simulationType == 'player_rating':
-            self.put_correct_players_on_field()
-            self.determine_starting_disc_location_before_pull()
-            self.determine_who_catches_pull()
-            self.determine_where_pull_is_caught()
-            point_time = self.simulate_ufa_point_by_player_rating(quarter, game_time)
-            self.save_player_point_stats_in_database(self.game)
-        else:
-            potential_times = [10, 20, 30, 45, 60, 90, 120, 180, 240, 360, 500]
-            self.calculate_difference_in_teams_overall_rating()
-            self.calculate_probability_for_winner()
-            self.simulate_point_by_team_rating()
-            point_time = potential_times[random.randint(1, 10)]
-        return point_time
 
     def determine_who_starts_point_with_disc(self):
         if self.teamInPointSimulationOne.startPointWithDisc:
@@ -247,13 +227,11 @@ class PointSimulation:
 
     def determine_starting_disc_location_before_pull(self):
         # team catches in endzone at 0, then disc starts at 0, and is pulled to 70
-        if self.discPostGoalLocation == 0:
+        if self.playDirection == -1:
             self.discCurrentLocation = 0
-            self.discPrePullLocation = 0
         # team catches in endzone at 70, disc starts at 70, and is pulled to 0
         else:
             self.discCurrentLocation = 70
-            self.discPrePullLocation = 70
 
     def determine_who_catches_pull(self):
         self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1],
@@ -268,7 +246,7 @@ class PointSimulation:
         self.determine_defender_options()
 
     def determine_where_pull_is_caught(self):
-        if self.discPrePullLocation == 70:
+        if self.discCurrentLocation == 70:
             random_start = random.randint(-10, 15)
         else:
             random_start = random.randint(55, 80)
@@ -397,7 +375,7 @@ class PointSimulation:
                 self.defenderOptions = [self.sevenOnFieldForDefense[3], self.sevenOnFieldForDefense[4],
                                         self.sevenOnFieldForDefense[5]]
 
-    def simulate_swing_throw(self, is_ufa=False, quarter=None, game_time=None):
+    def simulate_swing_throw(self):
         self.throwChoice = 'swing'
         self.determine_receiver_options()
         self.determine_defender_options()
@@ -408,12 +386,9 @@ class PointSimulation:
                                             self.playerWithDisc.player.swing_throw_offense + self.playerBeingThrownTo.player.handle_cut_offense
                                             - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.handle_cut_defense)
         self.randomYardsThrown = random.randint(-5, 5)
-        if is_ufa:
-            self.simulate_result_of_throw_ufa(time_of_throw=2, quarter=quarter, game_time=game_time)
-            return
         self.simulate_result_of_throw()
 
-    def simulate_under_throw(self, is_ufa=False, quarter=None, game_time=None):
+    def simulate_under_throw(self):
         self.throwChoice = 'under'
         self.determine_receiver_options()
         self.determine_defender_options()
@@ -424,12 +399,9 @@ class PointSimulation:
                                             self.playerWithDisc.player.under_throw_offense + self.playerBeingThrownTo.player.under_cut_offense
                                             - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.under_cut_defense)
         self.randomYardsThrown = random.randint(5, 15)
-        if is_ufa:
-            self.simulate_result_of_throw_ufa(time_of_throw=3, quarter=quarter, game_time=game_time)
-            return
         self.simulate_result_of_throw()
 
-    def simulate_short_huck_throw(self, is_ufa=False, quarter=None, game_time=None):
+    def simulate_short_huck_throw(self):
         self.throwChoice = 'short_huck'
         self.determine_receiver_options()
         self.determine_defender_options()
@@ -440,12 +412,9 @@ class PointSimulation:
                                             self.playerWithDisc.player.short_huck_throw_offense + self.playerBeingThrownTo.player.short_huck_cut_offense
                                             - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.short_huck_cut_defense)
         self.randomYardsThrown = random.randint(15, 30)
-        if is_ufa:
-            self.simulate_result_of_throw_ufa(time_of_throw=4, quarter=quarter, game_time=game_time)
-            return
         self.simulate_result_of_throw()
 
-    def simulate_deep_huck_throw(self, is_ufa=False, quarter=None, game_time=None):
+    def simulate_deep_huck_throw(self):
         self.throwChoice = 'deep_huck'
         self.determine_receiver_options()
         self.determine_defender_options()
@@ -456,9 +425,6 @@ class PointSimulation:
                                             self.playerWithDisc.player.deep_huck_throw_offense + self.playerBeingThrownTo.player.deep_huck_cut_offense
                                             - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.deep_huck_cut_defense)
         self.randomYardsThrown = random.randint(30, 70)
-        if is_ufa:
-            self.simulate_result_of_throw_ufa(time_of_throw=5, quarter=quarter, game_time=game_time)
-            return
         self.simulate_result_of_throw()
 
     def simulate_result_of_throw(self):
@@ -484,7 +450,7 @@ class PointSimulation:
                 self.pointWinner = self.teamOnOffenseCurrently.tournamentTeam
                 self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
                 self.pointLoser = self.teamOnDefenseCurrently.tournamentTeam
-                self.discPostGoalLocation = 70
+                self.discCurrentLocation = 0
                 self.assign_completions(isCompletion=True)
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
@@ -497,7 +463,7 @@ class PointSimulation:
                 self.pointWinner = self.teamOnOffenseCurrently.tournamentTeam
                 self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
                 self.pointLoser = self.teamOnDefenseCurrently.tournamentTeam
-                self.discPostGoalLocation = 0
+                self.discCurrentLocation = 0
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
                 self.assign_completions(isCompletion=True)
@@ -521,112 +487,19 @@ class PointSimulation:
             self.pointPrintStatement += (
                     str(self.teamOnOffenseCurrently.team.mascot) + ' dropped the throw at this location: at this location: ' + str(
                 self.discCurrentLocation) + '\n')
+            yards_added = self.randomYardsThrown * self.playDirection
+            self.discCurrentLocation += yards_added
             # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
             # or way out of bounds
-            if self.discCurrentLocation < -20:
+            if self.discCurrentLocation <= -20:
                 # turnover, disc goes to goal line at location 0 and team 2 has disc
                 self.discCurrentLocation = 0
             elif -20 < self.discCurrentLocation < 0:
                 self.discCurrentLocation = 0
             elif 70 < self.discCurrentLocation < 90:
                 self.discCurrentLocation = 70
-            elif self.discCurrentLocation > 90:
+            elif self.discCurrentLocation >= 90:
                 self.discCurrentLocation = 70
-            # throw was either dropped or thrown away
-            self.assign_drops()
-            self.switch_teams_due_to_turnover()
-
-    def simulate_result_of_throw_ufa(self, time_of_throw=None, quarter=None, game_time=None):
-        self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' tries to throw to: ' + str(
-            self.playerBeingThrownTo.player.last_name) + ' for ' + str(
-            self.randomYardsThrown) + 'yards \n')
-        if self.probabilityThrowIsCompleted < self.throwStartingProbability:
-            # play direction is either positive or negative
-            self.discCurrentLocation += self.randomYardsThrown * self.playDirection
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' completed ' + str(
-                self.throwChoice) + ' at this location: ' + str(
-                self.discCurrentLocation) + '\n')
-            if quarter == 1:
-                if time_of_throw + game_time > 720:
-                    self.pointPrintStatement += (
-                        'The First Quarter has Ended \n')
-                    return
-            if quarter == 2:
-                if time_of_throw + game_time > 1440:
-                    self.pointPrintStatement += (
-                        'The Second Quarter has Ended \n')
-                    return
-            if quarter == 3:
-                if time_of_throw + game_time > 2160:
-                    self.pointPrintStatement += (
-                        'The Third Quarter has Ended \n')
-                    return
-            if quarter == 4:
-                if time_of_throw + game_time > 2880:
-                    self.pointPrintStatement += (
-                        'The 4th Quarter has Ended \n')
-                    return
-            if self.discCurrentLocation < -20:
-                # turnover, disc goes to goal line at location 0 and team 2 has disc
-                self.discCurrentLocation = 0
-                self.assign_completions(isCompletion=False)
-                self.assign_throwaway_to_thrower()
-                self.assign_turnovers_forced()
-                self.switch_teams_due_to_turnover()
-            elif (self.playDirection == 1) and (80 < self.discCurrentLocation < 100):
-                self.assistThrower = self.playerWithDisc
-                self.goalScorer = self.playerBeingThrownTo
-                self.pointWinner = self.teamOnOffenseCurrently.tournamentTeam
-                self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
-                self.pointLoser = self.teamOnDefenseCurrently.tournamentTeam
-                self.discPostGoalLocation = 80
-                self.assign_completions(isCompletion=True)
-                self.assign_completion_yardage()
-                self.assign_goals_and_assists()
-                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
-                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
-                self.pointOver = True
-            elif (self.playDirection == -1) and (-20 < self.discCurrentLocation < 0):
-                self.assistThrower = self.playerWithDisc
-                self.goalScorer = self.playerBeingThrownTo
-                self.pointWinner = self.teamOnOffenseCurrently.tournamentTeam
-                self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
-                self.pointLoser = self.teamOnDefenseCurrently.tournamentTeam
-                self.discPostGoalLocation = 0
-                self.assign_completion_yardage()
-                self.assign_goals_and_assists()
-                self.assign_completions(isCompletion=True)
-                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
-                    self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
-                self.pointOver = True
-            elif self.discCurrentLocation > 100:
-                self.discCurrentLocation = 80
-                self.assign_completions(isCompletion=False)
-                self.assign_throwaway_to_thrower()
-                self.assign_turnovers_forced()
-                self.switch_teams_due_to_turnover()
-            else:
-                self.playerWithDisc.pointStats.throwingYards += self.randomYardsThrown
-                self.playerBeingThrownTo.pointStats.receivingYards += self.randomYardsThrown
-                self.playerWithDisc.gameStats.throwingYards += self.randomYardsThrown
-                self.playerBeingThrownTo.gameStats.receivingYards += self.randomYardsThrown
-                self.playerWithDisc = self.playerBeingThrownTo
-                self.playerGuardingDisc = self.playerGuardingPlayerBeingThrownTo
-        else:
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' dropped the throw \n')
-            # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
-            # or way out of bounds
-            if self.discCurrentLocation < -20:
-                # turnover, disc goes to goal line at location 0 and team 2 has disc
-                self.discCurrentLocation = 0
-            elif -20 < self.discCurrentLocation < 0:
-                self.discCurrentLocation = 0
-            elif 70 < self.discCurrentLocation < 90:
-                self.discCurrentLocation = 70
-            elif self.discCurrentLocation > 90:
-                self.discCurrentLocation = 70
-            else:
-                self.discCurrentLocation += self.randomYardsThrown * self.playDirection
             # throw was either dropped or thrown away
             self.assign_drops()
             self.switch_teams_due_to_turnover()
@@ -657,41 +530,6 @@ class PointSimulation:
                 self.throwChoice = 'deep_huck'
                 self.throwStartingProbability = 55
                 self.simulate_deep_huck_throw()
-
-    def simulate_ufa_point_by_player_rating(self, quarter=None, game_time=None):
-        # four pass options:
-        # 1: swing for -5 to +5 yards (random number between 0-3
-        # 2: under for 5 to 15 yards (random number between 4-6
-        # 3: short huck for 15-30 yards (random number between 7-8)
-        # 4: deep huck for 31-70 yards (cant go through end of end zone) (random number == 9-10
-        time_of_throw = 0
-        # Probability of Turnover
-        while not self.pointOver:
-            # determine what throw is going to be thrown
-            random_number = random.randint(0, 10)
-            if random_number in [0, 1, 2, 3]:
-                self.throwChoice = 'swing'
-                self.throwStartingProbability = 90
-                self.simulate_swing_throw(True, quarter, game_time)
-                time_of_throw += 2
-            elif random_number in [4, 5, 6]:
-                self.throwChoice = 'under'
-                self.throwStartingProbability = 80
-                self.simulate_under_throw(True, quarter, game_time)
-                time_of_throw += 3
-            elif random_number in [7, 8]:
-                self.throwChoice = 'short_huck'
-                self.throwStartingProbability = 65
-                self.simulate_short_huck_throw(True, quarter, game_time)
-                time_of_throw += 4
-            elif random_number in [9, 10]:
-                self.throwChoice = 'deep_huck'
-                self.throwStartingProbability = 55
-                self.simulate_deep_huck_throw(True, quarter, game_time)
-                time_of_throw += 5
-            length_between_throw = random.randint(1, 6)
-            time_of_throw += length_between_throw
-        return time_of_throw
 
     def switch_teams_due_to_turnover(self):
         if self.teamOnOffenseCurrently == self.teamInPointSimulationOne:

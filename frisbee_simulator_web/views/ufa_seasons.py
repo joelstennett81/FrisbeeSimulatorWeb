@@ -10,6 +10,7 @@ from frisbee_simulator_web.models import *
 @login_required(login_url='/login/')
 def detail_game(request, pk):
     game = UFASeasonGame.objects.prefetch_related(Prefetch('ufa_game_points', queryset=UFAPoint.objects.order_by('id'))).get(pk=pk)
+
     return render(request, 'ufa_games/detail_game.html', {'game': game})
 
 

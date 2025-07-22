@@ -19,6 +19,7 @@ class TeamInGameSimulation:
         self.oLineH2 = PlayerInGameSimulation(self.team, self.game, self.team.o_line_players.all()[1])
         self.oLineH3 = PlayerInGameSimulation(self.team, self.game, self.team.o_line_players.all()[2])
         self.oLineC1 = PlayerInGameSimulation(self.team, self.game, self.team.o_line_players.all()[3])
+        self.oLineC1 = PlayerInGameSimulation(self.team, self.game, self.team.o_line_players.all()[3])
         self.oLineC2 = PlayerInGameSimulation(self.team, self.game, self.team.o_line_players.all()[4])
         self.oLineC3 = PlayerInGameSimulation(self.team, self.game, self.team.o_line_players.all()[5])
         self.oLineC4 = PlayerInGameSimulation(self.team, self.game, self.team.o_line_players.all()[6])
@@ -178,6 +179,7 @@ class GameSimulation:
                                                    self.teamInGameSimulationTwo)
         self.pointSimulation.playDirection = self.playDirection
         self.pointSimulation.simulate_point()
+        self.pointWinner = self.pointSimulation.pointWinner
         self.pointSimulationsList.append(self.pointSimulation)
         self.point.print_statements = self.pointSimulation.pointPrintStatement
         self.point.team_one_score_post_point = self.teamInGameSimulationOne.score
@@ -228,10 +230,10 @@ class GameSimulation:
             if self.isFirstHalf:
                 self.setup_first_point_of_second_half()
                 return
-        if self.pointWinner == self.teamInGameSimulationOne:
+        if self.pointWinner == self.teamInGameSimulationOne.tournamentTeam:
             self.teamInGameSimulationOne.startPointWithDisc = False
             self.teamInGameSimulationTwo.startPointWithDisc = True
-        elif self.pointWinner == self.teamInGameSimulationTwo:
+        elif self.pointWinner == self.teamInGameSimulationTwo.tournamentTeam:
             self.teamInGameSimulationOne.startPointWithDisc = True
             self.teamInGameSimulationTwo.startPointWithDisc = False
         self.flip_play_direction()
@@ -260,15 +262,11 @@ class GameSimulation:
         if self.firstPointOfGamePlayDirection == 1:
             # pull will go 70 -> 0, then play will go 0->70
             self.playDirection = 1
-            self.pointSimulation.discPrePullLocation = 70
             self.pointSimulation.discCurrentLocation = 70
-            self.pointSimulation.discPostGoalLocation = 70
         else:
             # pull will go 0 -> 70, then play will go 70->0
             self.playDirection = -1
-            self.pointSimulation.discPrePullLocation = 0
             self.pointSimulation.discCurrentLocation = 0
-            self.pointSimulation.discPostGoalLocation = 0
 
     def setup_first_point_of_second_half(self):
         self.isFirstHalf = False
@@ -286,15 +284,11 @@ class GameSimulation:
         if self.firstPointOfGamePlayDirection == 1:
             # pull will go 70 -> 0, then play will go 0->70
             self.playDirection = 1
-            self.pointSimulation.discPrePullLocation = 70
             self.pointSimulation.discCurrentLocation = 70
-            self.pointSimulation.discPostGoalLocation = 70
         else:
             # pull will go 0 -> 70, then play will go 70->0
             self.playDirection = -1
-            self.pointSimulation.discPrePullLocation = 0
             self.pointSimulation.discCurrentLocation = 0
-            self.pointSimulation.discPostGoalLocation = 0
 
     def save_player_game_stats_in_database(self):
         teams = [self.teamInGameSimulationOne, self.teamInGameSimulationTwo]

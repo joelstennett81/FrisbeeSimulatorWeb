@@ -76,6 +76,8 @@ class Player(models.Model):
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
     teams = models.ManyToManyField('Team', related_name='teams_players', blank=True, null=True)
     seasons = models.ManyToManyField('Season', related_name='seasons_players', blank=True, null=True)
+    ufa_player = models.OneToOneField('UFAPlayer', on_delete=models.SET_NULL, null=True, blank=True, related_name='player')
+
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -342,6 +344,7 @@ class Point(models.Model):
     team_one_score_post_point = models.IntegerField(default=0)
     team_two_score_post_point = models.IntegerField(default=0)
 
+
 class UFAPoint(models.Model):
     game = models.ForeignKey(UFASeasonGame, on_delete=models.CASCADE, related_name='ufa_game_points')
     team_one = models.ForeignKey(UFASeasonTeam, on_delete=models.CASCADE, related_name='ufa_team_one_points')
@@ -375,6 +378,7 @@ class PlayerPointStat(models.Model):
     drops = models.PositiveIntegerField(default=0)
     callahans = models.PositiveIntegerField(default=0)
     pulls = models.PositiveIntegerField(default=0)
+
 
 class UFAPlayerPointStat(models.Model):
     game = models.ForeignKey(UFASeasonGame, on_delete=models.CASCADE, related_name='ufa_point_stats_for_game')
