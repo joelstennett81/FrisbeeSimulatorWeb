@@ -125,7 +125,7 @@ class UFAPlayerStatsInPointSimulation:
 
 
 class UFAPointSimulation:
-    def __init__(self, game, point, teamInGameSimulationOne, teamInGameSimulationTwo):
+    def __init__(self, game, point, teamInGameSimulationOne, teamInGameSimulationTwo, startingPlayDirection):
         super().__init__()
         self.game = game
         self.point = point
@@ -168,10 +168,8 @@ class UFAPointSimulation:
         self.simulationType = 'player_rating'
         self.oLineOnField = None
         self.dLineOnField = None
-        self.discPrePullLocation = None
         self.discCurrentLocation = None
-        self.discPostGoalLocation = None
-        self.playDirection = None  # Positive means going from 0-> 70, Negative means going from 0<-70
+        self.playDirection = startingPlayDirection  # Positive means going from 0-> 70, Negative means going from 0<-70
         self.teamWithDiscToStartGame = None
         self.pointPrintStatement = ''
 
@@ -233,13 +231,11 @@ class UFAPointSimulation:
 
     def determine_starting_disc_location_before_pull(self):
         # team catches in endzone at 0, then disc starts at 0, and is pulled to 80
-        if self.discPostGoalLocation == 0:
+        if self.playDirection == -1:
             self.discCurrentLocation = 0
-            self.discPrePullLocation = 0
-        # team catches in endzone at 80, disc starts at 80, and is pulled to 80
+        # team catches in endzone at 80, disc starts at 80, and is pulled to 0
         else:
             self.discCurrentLocation = 80
-            self.discPrePullLocation = 80
 
     def determine_who_catches_pull(self):
         self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1],
@@ -254,7 +250,7 @@ class UFAPointSimulation:
         self.determine_defender_options()
 
     def determine_where_pull_is_caught(self):
-        if self.discPrePullLocation == 80:
+        if self.discCurrentLocation == 80:
             random_start = random.randint(-10, 15)
         else:
             random_start = random.randint(65, 90)
@@ -485,8 +481,6 @@ class UFAPointSimulation:
                 self.pointWinner = self.teamOnOffenseCurrently.seasonTeam
                 self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
                 self.pointLoser = self.teamOnDefenseCurrently.seasonTeam
-                self.discPostGoalLocation = 80
-                self.discPrePullLocation = 80
                 self.assign_completions(isCompletion=True)
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
@@ -499,8 +493,6 @@ class UFAPointSimulation:
                 self.pointWinner = self.teamOnOffenseCurrently.seasonTeam
                 self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
                 self.pointLoser = self.teamOnDefenseCurrently.seasonTeam
-                self.discPostGoalLocation = 0
-                self.discPrePullLocation = 0
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
                 self.assign_completions(isCompletion=True)

@@ -175,7 +175,7 @@ class UFAGameSimulation:
                                                  point_number_in_game=self.pointCounter)
             self.point.save()
             self.pointSimulation = UFAPointSimulation(self.game, self.point, self.teamInGameSimulationOne,
-                                                      self.teamInGameSimulationTwo)
+                                                      self.teamInGameSimulationTwo, self.playDirection)
         self.pointSimulation.playDirection = self.playDirection
         time_of_point = self.pointSimulation.simulate_ufa_point(current_quarter, total_game_time)
         self.pointWinner = self.pointSimulation.pointWinner
@@ -328,20 +328,16 @@ class UFAGameSimulation:
 
         self.pointSimulation = UFAPointSimulation(
             self.game, self.point,
-            self.teamInGameSimulationOne, self.teamInGameSimulationTwo
+            self.teamInGameSimulationOne, self.teamInGameSimulationTwo, self.playDirection
         )
 
         # Set disc locations based on play direction
         if self.firstPointOfGamePlayDirection == 1:
             self.playDirection = 1
-            self.pointSimulation.discPrePullLocation = 80
             self.pointSimulation.discCurrentLocation = 80
-            self.pointSimulation.discPostGoalLocation = 80
         else:
             self.playDirection = -1
-            self.pointSimulation.discPrePullLocation = 0
             self.pointSimulation.discCurrentLocation = 0
-            self.pointSimulation.discPostGoalLocation = 0
 
     def save_player_game_stats_in_database(self):
         teams = [self.teamInGameSimulationOne, self.teamInGameSimulationTwo]
