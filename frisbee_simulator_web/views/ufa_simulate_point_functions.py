@@ -514,19 +514,20 @@ class UFAPointSimulation:
                 self.playerGuardingDisc = self.playerGuardingPlayerBeingThrownTo
         else:
             self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' dropped the throw \n')
+            yards_added = self.randomYardsThrown * self.playDirection
+            self.discCurrentLocation += yards_added
             # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
             # or way out of bounds
-            if self.discCurrentLocation < -20:
+            if self.discCurrentLocation <= -20:
                 # turnover, disc goes to goal line at location 0 and team 2 has disc
                 self.discCurrentLocation = 0
             elif -20 < self.discCurrentLocation < 0:
                 self.discCurrentLocation = 0
             elif 70 < self.discCurrentLocation < 90:
                 self.discCurrentLocation = 70
-            elif self.discCurrentLocation > 90:
+            elif self.discCurrentLocation >= 90:
                 self.discCurrentLocation = 70
-            else:
-                self.discCurrentLocation += self.randomYardsThrown * self.playDirection
+
             # throw was either dropped or thrown away
             self.assign_drops()
             self.switch_teams_due_to_turnover()
