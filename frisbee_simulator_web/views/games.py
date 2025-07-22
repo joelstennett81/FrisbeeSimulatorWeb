@@ -30,16 +30,18 @@ def create_individual_game(request):
         form = GameForm(request=request)
     return render(request, 'games/create_individual_game.html', {'form': form})
 
+
 @login_required(login_url='/login/')
 def create_individual_ufa_game(request):
     if request.method == 'POST':
         form = UFASeasonGameForm(request.POST, request=request)
         if form.is_valid():
+            season = UFASeason.objects.get(year=2025)
             game = form.save(commit=False)
             game.created_by = request.user.profile
             game.game_type = 'UFA'
+            game.season = season
             game.save()
-            season = UFASeason.objects.get(year=2024)
             UFASeasonTeam.objects.create(team=game.team_one.team, season=season, division=game.team_one.division)
             UFASeasonTeam.objects.create(team=game.team_two.team, season=season, division=game.team_two.division)
 
@@ -101,6 +103,7 @@ def simulate_individual_ufa_game(request, game_id):
 def games_list(request):
     games = Game.objects.filter(game_type='Exhibition', created_by=request.user.profile)
     return render(request, 'games/games_list.html', {'games': games})
+
 
 @login_required(login_url='/login/')
 def ufa_games_list(request):

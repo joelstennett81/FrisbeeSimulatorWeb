@@ -169,15 +169,16 @@ class UFAGameSimulation:
         self.firstPointOfGamePlayDirection = self.playDirection
 
     def simulate_ufa_point(self, current_quarter, total_game_time):
-        if not self.isStartOfFirstHalf and not self.isStartOfSecondHalf:
+        if not self.isStartOfFirstQuarter and not self.isStartOfSecondQuarter and not self.isStartOfThirdQuarter and not self.isStartOfFourthQuarter:
             self.point = UFAPoint.objects.create(game=self.game, team_one=self.teamInGameSimulationOne.seasonTeam,
-                                              team_two=self.teamInGameSimulationTwo.seasonTeam,
-                                              point_number_in_game=self.pointCounter)
+                                                 team_two=self.teamInGameSimulationTwo.seasonTeam,
+                                                 point_number_in_game=self.pointCounter)
             self.point.save()
             self.pointSimulation = UFAPointSimulation(self.game, self.point, self.teamInGameSimulationOne,
-                                                   self.teamInGameSimulationTwo)
+                                                      self.teamInGameSimulationTwo)
         self.pointSimulation.playDirection = self.playDirection
         time_of_point = self.pointSimulation.simulate_ufa_point(current_quarter, total_game_time)
+        self.pointWinner = self.pointSimulation.pointWinner
         self.pointSimulationsList.append(self.pointSimulation)
         self.point.print_statements = self.pointSimulation.pointPrintStatement
         self.point.team_one_score_post_point = self.teamInGameSimulationOne.score
@@ -198,13 +199,11 @@ class UFAGameSimulation:
             point_time = self.simulate_ufa_point(self.total_game_time, self.quarter)
             self.total_game_time += point_time
             if (self.quarter == 1) and (self.total_game_time > 720):
-                self.total_game_time = 720
                 self.isFirstQuarter = False
                 self.isSecondQuarter = True
                 self.isStartOfSecondQuarter = True
                 self.setup_first_point_of_period(2)
             elif (self.quarter == 2) and (self.total_game_time > 720):
-                self.total_game_time = 1440
                 self.isSecondQuarter = False
                 self.isThirdQuarter = True
                 self.isStartOfThirdQuarter = True
@@ -212,13 +211,11 @@ class UFAGameSimulation:
                 self.isStartOfSecondHalf = True
                 self.setup_first_point_of_period(3)
             elif (self.quarter == 3) and (self.total_game_time > 720):
-                self.total_game_time = 2160
                 self.isThirdQuarter = False
                 self.isFourthQuarter = True
                 self.isStartOfFourthQuarter = True
                 self.setup_first_point_of_period(4)
             elif (self.quarter == 4) and (self.total_game_time > 720):
-                self.total_game_time = 2880
                 self.isSecondQuarter = False
                 self.isThirdQuarter = True
                 if self.teamInGameSimulationOne.score == self.teamInGameSimulationTwo.score:
@@ -241,10 +238,25 @@ class UFAGameSimulation:
                         self.game.winner_score = self.teamInGameSimulationTwo.score
                         self.game.loser_score = self.teamInGameSimulationOne.score
                         self.gameOver = True
+            elif (self.quarter == 5):
+                if self.teamInGameSimulationOne.score > self.teamInGameSimulationTwo.score:
+                    self.winner = self.teamInGameSimulationOne.seasonTeam
+                    self.loser = self.teamInGameSimulationTwo.seasonTeam
+                    self.game.winner_score = self.teamInGameSimulationOne.score
+                    self.game.loser_score = self.teamInGameSimulationTwo.score
+                    self.gameOver = True
+                else:
+                    self.winner = self.teamInGameSimulationTwo.seasonTeam
+                    self.loser = self.teamInGameSimulationOne.seasonTeam
+                    self.game.winner_score = self.teamInGameSimulationTwo.score
+                    self.game.loser_score = self.teamInGameSimulationOne.score
+                    self.gameOver = True
             else:
                 self.setup_next_ufa_point()
-            self.isStartOfFirstHalf = False
-            self.isStartOfSecondHalf = False
+
+            self.isStartOfFirstQuarter = False
+            self.isStartOfSecondQuarter = False
+            self.isStartOfThirdQuarter = False
             self.isStartOfFourthQuarter = False
             self.isStartOfOvertime = False
         self.save_player_game_stats_in_database()
@@ -257,10 +269,10 @@ class UFAGameSimulation:
         self.playDirection = newPlayDirection
 
     def setup_next_ufa_point(self):
-        if self.pointWinner == self.teamInGameSimulationOne:
+        if self.pointWinner == self.teamInGameSimulationOne.seasonTeam:
             self.teamInGameSimulationOne.startPointWithDisc = False
             self.teamInGameSimulationTwo.startPointWithDisc = True
-        elif self.pointWinner == self.teamInGameSimulationTwo:
+        elif self.pointWinner == self.teamInGameSimulationTwo.seasonTeam:
             self.teamInGameSimulationOne.startPointWithDisc = True
             self.teamInGameSimulationTwo.startPointWithDisc = False
         else:
@@ -330,8 +342,6 @@ class UFAGameSimulation:
             self.pointSimulation.discPrePullLocation = 0
             self.pointSimulation.discCurrentLocation = 0
             self.pointSimulation.discPostGoalLocation = 0
-
-        self.setup_next_ufa_point()
 
     def save_player_game_stats_in_database(self):
         teams = [self.teamInGameSimulationOne, self.teamInGameSimulationTwo]

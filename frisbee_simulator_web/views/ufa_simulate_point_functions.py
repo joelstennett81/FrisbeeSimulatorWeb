@@ -23,47 +23,47 @@ class UFATeamInPointSimulation:
             self.startSecondHalfWithDisc = True
         self.score = 0
         self.oLineH1 = UFAPlayerInPointSimulation(self.team, self.point, self.team.o_line_players.all()[0],
-                                               self.teamInGameSimulation.oLineH1.gameStats)
+                                                  self.teamInGameSimulation.oLineH1.gameStats)
         self.oLineH2 = UFAPlayerInPointSimulation(self.team, self.point, self.team.o_line_players.all()[1],
-                                               self.teamInGameSimulation.oLineH2.gameStats)
+                                                  self.teamInGameSimulation.oLineH2.gameStats)
         self.oLineH3 = UFAPlayerInPointSimulation(self.team, self.point, self.team.o_line_players.all()[2],
-                                               self.teamInGameSimulation.oLineH3.gameStats)
+                                                  self.teamInGameSimulation.oLineH3.gameStats)
         self.oLineC1 = UFAPlayerInPointSimulation(self.team, self.point, self.team.o_line_players.all()[3],
-                                               self.teamInGameSimulation.oLineC1.gameStats)
+                                                  self.teamInGameSimulation.oLineC1.gameStats)
         self.oLineC2 = UFAPlayerInPointSimulation(self.team, self.point, self.team.o_line_players.all()[4],
-                                               self.teamInGameSimulation.oLineC2.gameStats)
+                                                  self.teamInGameSimulation.oLineC2.gameStats)
         self.oLineC3 = UFAPlayerInPointSimulation(self.team, self.point, self.team.o_line_players.all()[5],
-                                               self.teamInGameSimulation.oLineC3.gameStats)
+                                                  self.teamInGameSimulation.oLineC3.gameStats)
         self.oLineC4 = UFAPlayerInPointSimulation(self.team, self.point, self.team.o_line_players.all()[6],
-                                               self.teamInGameSimulation.oLineC4.gameStats)
+                                                  self.teamInGameSimulation.oLineC4.gameStats)
         self.dLineH1 = UFAPlayerInPointSimulation(self.team, self.point, self.team.d_line_players.all()[0],
-                                               self.teamInGameSimulation.dLineH1.gameStats)
+                                                  self.teamInGameSimulation.dLineH1.gameStats)
         self.dLineH2 = UFAPlayerInPointSimulation(self.team, self.point, self.team.d_line_players.all()[1],
-                                               self.teamInGameSimulation.dLineH2.gameStats)
+                                                  self.teamInGameSimulation.dLineH2.gameStats)
         self.dLineH3 = UFAPlayerInPointSimulation(self.team, self.point, self.team.d_line_players.all()[2],
-                                               self.teamInGameSimulation.dLineH3.gameStats)
+                                                  self.teamInGameSimulation.dLineH3.gameStats)
         self.dLineC1 = UFAPlayerInPointSimulation(self.team, self.point, self.team.d_line_players.all()[3],
-                                               self.teamInGameSimulation.dLineC1.gameStats)
+                                                  self.teamInGameSimulation.dLineC1.gameStats)
         self.dLineC2 = UFAPlayerInPointSimulation(self.team, self.point, self.team.d_line_players.all()[4],
-                                               self.teamInGameSimulation.dLineC2.gameStats)
+                                                  self.teamInGameSimulation.dLineC2.gameStats)
         self.dLineC3 = UFAPlayerInPointSimulation(self.team, self.point, self.team.d_line_players.all()[5],
-                                               self.teamInGameSimulation.dLineC3.gameStats)
+                                                  self.teamInGameSimulation.dLineC3.gameStats)
         self.dLineC4 = UFAPlayerInPointSimulation(self.team, self.point, self.team.d_line_players.all()[6],
-                                               self.teamInGameSimulation.dLineC4.gameStats)
+                                                  self.teamInGameSimulation.dLineC4.gameStats)
         self.benchH1 = UFAPlayerInPointSimulation(self.team, self.point, self.team.bench_players.all()[0],
-                                               self.teamInGameSimulation.benchH1.gameStats)
+                                                  self.teamInGameSimulation.benchH1.gameStats)
         self.benchH2 = UFAPlayerInPointSimulation(self.team, self.point, self.team.bench_players.all()[1],
-                                               self.teamInGameSimulation.benchH2.gameStats)
+                                                  self.teamInGameSimulation.benchH2.gameStats)
         self.benchH3 = UFAPlayerInPointSimulation(self.team, self.point, self.team.bench_players.all()[2],
-                                               self.teamInGameSimulation.benchH3.gameStats)
+                                                  self.teamInGameSimulation.benchH3.gameStats)
         self.benchC1 = UFAPlayerInPointSimulation(self.team, self.point, self.team.bench_players.all()[3],
-                                               self.teamInGameSimulation.benchC1.gameStats)
+                                                  self.teamInGameSimulation.benchC1.gameStats)
         self.benchC2 = UFAPlayerInPointSimulation(self.team, self.point, self.team.bench_players.all()[4],
-                                               self.teamInGameSimulation.benchC2.gameStats)
+                                                  self.teamInGameSimulation.benchC2.gameStats)
         self.benchC3 = UFAPlayerInPointSimulation(self.team, self.point, self.team.bench_players.all()[5],
-                                               self.teamInGameSimulation.benchC3.gameStats)
+                                                  self.teamInGameSimulation.benchC3.gameStats)
         self.benchC4 = UFAPlayerInPointSimulation(self.team, self.point, self.team.bench_players.all()[6],
-                                               self.teamInGameSimulation.benchC4.gameStats)
+                                                  self.teamInGameSimulation.benchC4.gameStats)
         self.oLinePlayers = [self.oLineH1, self.oLineH2, self.oLineH3, self.oLineC1, self.oLineC2, self.oLineC3,
                              self.oLineC4]
         self.dLinePlayers = [self.dLineH1, self.dLineH2, self.dLineH3, self.dLineC1, self.dLineC2, self.dLineC3,
@@ -141,9 +141,9 @@ class UFAPointSimulation:
         # everything else
         self.throwStartingProbability = None
         self.teamInPointSimulationOne = UFATeamInPointSimulation(self.point.team_one, self.point,
-                                                              self.teamInGameSimulationOne)
+                                                                 self.teamInGameSimulationOne)
         self.teamInPointSimulationTwo = UFATeamInPointSimulation(self.point.team_two, self.point,
-                                                              self.teamInGameSimulationTwo)
+                                                                 self.teamInGameSimulationTwo)
         self.sevenOnFieldForTeamOne = None
         self.sevenOnFieldForTeamTwo = None
         self.sevenOnFieldForOffense = None
@@ -181,8 +181,8 @@ class UFAPointSimulation:
         if self.simulationType == 'player_rating':
             self.put_correct_players_on_field()
             self.determine_starting_disc_location_before_pull()
-            self.determine_who_catches_pull()
             self.determine_where_pull_is_caught()
+            self.determine_who_catches_pull()
             point_time = self.simulate_ufa_point_by_player_rating(quarter, game_time)
             self.save_player_point_stats_in_database(self.game)
         else:
@@ -232,14 +232,14 @@ class UFAPointSimulation:
             print('error with correct players on field')
 
     def determine_starting_disc_location_before_pull(self):
-        # team catches in endzone at 0, then disc starts at 0, and is pulled to 70
+        # team catches in endzone at 0, then disc starts at 0, and is pulled to 80
         if self.discPostGoalLocation == 0:
             self.discCurrentLocation = 0
             self.discPrePullLocation = 0
-        # team catches in endzone at 70, disc starts at 70, and is pulled to 0
+        # team catches in endzone at 80, disc starts at 80, and is pulled to 80
         else:
-            self.discCurrentLocation = 70
-            self.discPrePullLocation = 70
+            self.discCurrentLocation = 80
+            self.discPrePullLocation = 80
 
     def determine_who_catches_pull(self):
         self.receiverOptions = [self.sevenOnFieldForOffense[0], self.sevenOnFieldForOffense[1],
@@ -254,10 +254,10 @@ class UFAPointSimulation:
         self.determine_defender_options()
 
     def determine_where_pull_is_caught(self):
-        if self.discPrePullLocation == 70:
+        if self.discPrePullLocation == 80:
             random_start = random.randint(-10, 15)
         else:
-            random_start = random.randint(55, 80)
+            random_start = random.randint(65, 90)
         self.discCurrentLocation = random_start
         self.pointPrintStatement += ('The pull was caught at: ' + str(self.discCurrentLocation) + ' yard line \n')
 
@@ -394,9 +394,7 @@ class UFAPointSimulation:
                                             self.playerWithDisc.player.swing_throw_offense + self.playerBeingThrownTo.player.handle_cut_offense
                                             - self.playerGuardingDisc.player.handle_mark_defense - self.playerGuardingPlayerBeingThrownTo.player.handle_cut_defense)
         self.randomYardsThrown = random.randint(-5, 5)
-        if is_ufa:
-            self.simulate_result_of_throw_ufa(time_of_throw=2, quarter=quarter, game_time=game_time)
-            return
+        self.simulate_result_of_throw_ufa(time_of_throw=2, quarter=quarter, game_time=game_time)
 
     def simulate_under_throw(self, is_ufa=False, quarter=None, game_time=None):
         self.throwChoice = 'under'
@@ -449,10 +447,11 @@ class UFAPointSimulation:
             self.randomYardsThrown) + 'yards \n')
         if self.probabilityThrowIsCompleted < self.throwStartingProbability:
             # play direction is either positive or negative
-            self.discCurrentLocation += self.randomYardsThrown * self.playDirection
+            yards_added = self.randomYardsThrown * self.playDirection
+            self.discCurrentLocation += yards_added
             self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' completed ' + str(
                 self.throwChoice) + ' at this location: ' + str(
-                self.discCurrentLocation) + '\n')
+                self.discCurrentLocation) + '; play direction:  ' + str(self.playDirection) + '\n')
             if quarter == 1:
                 if time_of_throw + game_time > 720:
                     self.pointPrintStatement += (
@@ -473,7 +472,7 @@ class UFAPointSimulation:
                     self.pointPrintStatement += (
                         'The 4th Quarter has Ended \n')
                     return
-            if self.discCurrentLocation < -20:
+            if self.discCurrentLocation <= -20:
                 # turnover, disc goes to goal line at location 0 and team 2 has disc
                 self.discCurrentLocation = 0
                 self.assign_completions(isCompletion=False)
@@ -487,6 +486,7 @@ class UFAPointSimulation:
                 self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
                 self.pointLoser = self.teamOnDefenseCurrently.seasonTeam
                 self.discPostGoalLocation = 80
+                self.discPrePullLocation = 80
                 self.assign_completions(isCompletion=True)
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
@@ -500,13 +500,14 @@ class UFAPointSimulation:
                 self.teamOnOffenseCurrently.teamInGameSimulation.score += 1
                 self.pointLoser = self.teamOnDefenseCurrently.seasonTeam
                 self.discPostGoalLocation = 0
+                self.discPrePullLocation = 0
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
                 self.assign_completions(isCompletion=True)
                 self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
                     self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
                 self.pointOver = True
-            elif self.discCurrentLocation > 100:
+            elif self.discCurrentLocation >= 100:
                 self.discCurrentLocation = 80
                 self.assign_completions(isCompletion=False)
                 self.assign_throwaway_to_thrower()

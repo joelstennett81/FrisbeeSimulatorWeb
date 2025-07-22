@@ -199,7 +199,7 @@ class UFASeasonGameForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         user_profile = self.request.user.profile
         # Filter to only teams created by this user
-        season = UFASeason.objects.filter(year=2024).first()
+        season = UFASeason.objects.filter(year=2025).first()
         self.fields['team_one'].queryset = UFASeasonTeam.objects.filter(season=season)
         self.fields['team_two'].queryset = UFASeasonTeam.objects.filter(season=season)
 

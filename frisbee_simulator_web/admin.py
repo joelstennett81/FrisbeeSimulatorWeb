@@ -13,10 +13,90 @@ from django.db import transaction
 UFA_API_BASE = "https://api.theaudl.com/api/v1"
 
 
+@admin.register(PlayerGameStat)
+class PlayerGameStatAdmin(admin.ModelAdmin):
+    list_display = ('player', 'get_game_date', 'goals', 'assists', 'throwing_yards', 'receiving_yards')
+    search_fields = ('player__first_name', 'player__last_name')
+    list_filter = ('game',)
+
+    def get_game_date(self, obj):
+        return obj.game.date if obj.game else "-"
+
+    get_game_date.short_description = 'Game Date'
+
+
+@admin.register(PlayerPointStat)
+class PlayerPointStatAdmin(admin.ModelAdmin):
+    list_display = ('player', 'get_game_date', 'get_point_number', 'goals', 'assists', 'throwaways', 'drops')
+    search_fields = ('player__first_name', 'player__last_name')
+    list_filter = ('game',)
+
+    def get_game_date(self, obj):
+        return obj.game.date if obj.game else "-"
+
+    get_game_date.short_description = 'Game Date'
+
+    def get_point_number(self, obj):
+        return obj.point.number if obj.point else "-"
+
+    get_point_number.short_description = 'Point #'
+
+
+@admin.register(PlayerSeasonStat)
+class PlayerSeasonStatAdmin(admin.ModelAdmin):
+    list_display = ('player', 'season')
+
+
+@admin.register(PlayerTournamentStat)
+class PlayerTournamentStatAdmin(admin.ModelAdmin):
+    list_display = ('player', 'tournament', 'goals', 'assists', 'throwing_yards', 'receiving_yards')
+    search_fields = ('player__first_name', 'player__last_name')
+
+
+@admin.register(UFAPlayerGameStat)
+class UFAPlayerGameStatAdmin(admin.ModelAdmin):
+    list_display = ('player', 'get_game_date', 'goals', 'assists', 'throwing_yards', 'receiving_yards')
+    search_fields = ('player__first_name', 'player__last_name')
+
+    def get_game_date(self, obj):
+        return obj.game.date if obj.game else "-"
+
+    get_game_date.short_description = 'Game Date'
+
+
+@admin.register(UFAPlayerPointStat)
+class UFAPlayerPointStatAdmin(admin.ModelAdmin):
+    list_display = ('player', 'get_game_date', 'get_point_number', 'goals', 'assists', 'throwaways', 'drops')
+    search_fields = ('player__first_name', 'player__last_name')
+
+    def get_game_date(self, obj):
+        return obj.game.date if obj.game else "-"
+
+    get_game_date.short_description = 'Game Date'
+
+    def get_point_number(self, obj):
+        return obj.point.number if obj.point else "-"
+
+    get_point_number.short_description = 'Point #'
+
+
+@admin.register(UFAPlayerSeasonStat)
+class UFAPlayerSeasonStatAdmin(admin.ModelAdmin):
+    list_display = ('player', 'season', 'goals', 'assists', 'throwing_yards', 'receiving_yards')
+    search_fields = ('player__first_name', 'player__last_name')
+
+
+@admin.register(UFASeasonGame)
+class UFASeasonGameAdmin(admin.ModelAdmin):
+    list_display = ('date', 'team_one', 'team_two', 'winner', 'winner_score', 'loser_score', 'is_completed')
+    list_filter = ('is_completed', 'game_type')
+    search_fields = ('team_one__team__location', 'team_two__team__location')
+
+
 def fetch_and_update_players(modeladmin, request, queryset):
     """Fetch and update a Player from the API using their ufa_id."""
     url = "https://www.backend.ufastats.com/api/v1/players"
-    params = {'years': '2024'}
+    params = {'years': '2025'}
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()
@@ -34,7 +114,7 @@ def fetch_and_update_players(modeladmin, request, queryset):
             for api_team in teams:
                 team = UFATeam.objects.get(ufa_id=api_team['teamID'])
                 player_team, player_team_created = UFAPlayerTeam.objects.update_or_create(team=team, player=player,
-                                                                                          is_active=True,
+                                                                                          active=True,
                                                                                           defaults={
                                                                                               "year": api_team['year'],
                                                                                               "jersey_number": api_team[
@@ -48,7 +128,7 @@ def fetch_and_update_players(modeladmin, request, queryset):
 def fetch_and_update_teams(modeladmin, request, queryset):
     url = "https://www.backend.ufastats.com/api/v1/teams"
 
-    params = {'years': '2024'}
+    params = {'years': '2025'}
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()
@@ -89,7 +169,7 @@ def fetch_and_update_teams(modeladmin, request, queryset):
 
 def fetch_and_update_games(modeladmin, request, queryset):
     url = "https://www.backend.ufastats.com/api/v1/games"
-    params = {'date': '2024-01-01:2024-12-31'}
+    params = {'date': '2025-01-01:2025-12-31'}
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()
@@ -129,7 +209,7 @@ def fetch_and_update_games(modeladmin, request, queryset):
 def fetch_and_update_year_stats(modeladmin, request, queryset):
     url = "https://www.backend.ufastats.com/api/v1/playerStats"
     BATCH_SIZE = 100
-    YEAR = 2024
+    YEAR = 2025
     errors = []
 
     # Cache all existing players by ufa_id
@@ -218,7 +298,7 @@ def fetch_and_update_year_stats(modeladmin, request, queryset):
 
 
 def create_teams_from_ufa_teams(modeladmin, request, queryset):
-    ufa_teams = UFATeam.objects.filter(year=2024)
+    ufa_teams = UFATeam.objects.filter(year=2025)
 
     for ufa_team in ufa_teams:
         team, created = Team.objects.update_or_create(
@@ -232,26 +312,23 @@ def create_teams_from_ufa_teams(modeladmin, request, queryset):
         # Get UFA players on that team
         ufa_player_ids = UFAPlayerTeam.objects.filter(
             team=ufa_team,
-            year=2024,
+            year=2025,
             active=True
-        ).values_list('player__first_name', 'player__last_name')
+        ).values_list('player_id', flat=True)
 
         # Match to Player instances by name
-        matched_players = Player.objects.filter(
-            first_name__in=[p[0] for p in ufa_player_ids],
-            last_name__in=[p[1] for p in ufa_player_ids]
-        )
+        matched_players = Player.objects.filter(ufa_player__in=ufa_player_ids)
         # Assign to the team
         team.players.set(matched_players)
         team.save()
 
 
-def setup_2024_ufa_season(modeladmin, request, queryset):
-    ufa_teams = UFATeam.objects.filter(year=2024)
-    season, created = UFASeason.objects.update_or_create(name='2024 Season', year=2024, number_of_teams=24)
+def setup_ufa_season(modeladmin, request, queryset):
+    ufa_teams = UFATeam.objects.filter(year=2025)
+    season, created = UFASeason.objects.update_or_create(name='2025 Season', year=2025, number_of_teams=24)
 
     for ufa_team in ufa_teams:
-        api_team = Team.objects.get(year=2024, location=ufa_team.city, mascot=ufa_team.name)
+        api_team = Team.objects.get(year=2025, location=ufa_team.city, mascot=ufa_team.name)
         team, created = UFASeasonTeam.objects.update_or_create(
             team=api_team,
             season=season,
@@ -262,37 +339,55 @@ def setup_2024_ufa_season(modeladmin, request, queryset):
 def assign_primary_lines_for_team(team):
     players = list(team.players.all())
 
-    # Score players
-    scored_players = []
-    for p in players:
-        offense_score = p.overall_handle_offense_rating + p.overall_cutter_offense_rating
-        defense_score = p.overall_handle_defense_rating + p.overall_cutter_defense_rating
-        scored_players.append((p, offense_score, defense_score))
+    # Fetch UFA stats for each player
+    ufa_stats_map = {
+        stat.player_id: stat for stat in UFAPlayerStatsYear.objects.filter(
+            year=2025,
+            player__in=[p.ufa_player for p in players if p.ufa_player]
+        )
+    }
 
-    # Sort by offense score and pick top 7
-    offense_line = sorted(scored_players, key=lambda x: x[1], reverse=True)[:7]
-    offense_players = {p[0] for p in offense_line}
+    # Score by points played
+    player_stats = []
+    for player in players:
+        ufa_player = player.ufa_player
+        if not ufa_player:
+            continue
+        stat = ufa_stats_map.get(ufa_player.id)
+        if not stat:
+            continue
 
-    # Sort by defense score, skip those already in offense
-    remaining_for_defense = [x for x in scored_players if x[0] not in offense_players]
-    defense_line = sorted(remaining_for_defense, key=lambda x: x[2], reverse=True)[:7]
-    defense_players = {p[0] for p in defense_line}
+        o_points = stat.o_points_played or 0
+        d_points = stat.d_points_played or 0
+        total = o_points + d_points
+        player_stats.append((player, o_points, d_points, total))
+    # Sort by points played
+    offense_line = sorted(player_stats, key=lambda x: x[1], reverse=True)[:7]
+    offense_players = {x[0] for x in offense_line}
 
-    remaining_for_bench = [x for x in scored_players if x[0] not in [offense_players, remaining_for_defense]]
-    bench_line = sorted(remaining_for_bench, key=lambda x: x[2], reverse=True)[:7]
-    bench_players = {p[0] for p in bench_line}
+    remaining = [x for x in player_stats if x[0] not in offense_players]
+    defense_line = sorted(remaining, key=lambda x: x[2], reverse=True)[:7]
+    defense_players = {x[0] for x in defense_line}
 
-    # Remaining players → bench (best remaining overall)
-    used_players = offense_players.union(defense_players).union(bench_players)
-    remaining = [x for x in scored_players if x[0] not in used_players]
-    deep_bench_line = sorted(remaining, key=lambda x: x[1] + x[2], reverse=True)[:7]
-    deep_bench_players = {p[0] for p in deep_bench_line}
+    remaining = [x for x in remaining if x[0] not in defense_players]
+    bench_line = sorted(remaining, key=lambda x: x[3], reverse=True)[:7]
+    bench_players = {x[0] for x in bench_line}
 
+    used_players = offense_players | defense_players | bench_players
+    deep_bench_line = sorted(
+        [x for x in player_stats if x[0] not in used_players],
+        key=lambda x: x[3],
+        reverse=True
+    )[:7]
+    deep_bench_players = {x[0] for x in deep_bench_line}
+
+    # Save line assignments
     team.o_line_players.set(offense_players)
     team.d_line_players.set(defense_players)
     team.bench_players.set(bench_players)
     team.deep_bench_players.set(deep_bench_players)
 
+    # Handler/cutter roles (default to cutter if not in top 3 handlers)
     o_handlers = sorted(offense_players, key=lambda p: p.overall_handle_offense_rating, reverse=True)[:3]
     d_handlers = sorted(defense_players, key=lambda p: p.overall_handle_defense_rating, reverse=True)[:3]
     bench_handlers = sorted(bench_players, key=lambda p: p.overall_handle_offense_rating, reverse=True)[:3]
@@ -308,9 +403,9 @@ def assign_primary_lines_for_team(team):
     team.bench_cutters.set(bench_cutters)
     team.save()
 
-    # Assign and save
+    # Save primary line/position to Player model
     updates = []
-    for p, *_ in scored_players:
+    for p in players:
         if p in offense_players:
             p.primary_line = 'OFFENSE'
             p.primary_position = 'OFFENSE'
@@ -320,10 +415,12 @@ def assign_primary_lines_for_team(team):
         elif p in bench_players:
             p.primary_line = 'BENCH'
             p.primary_position = 'DEFENSE'
+        elif p in deep_bench_players:
+            p.primary_line = 'DEEP_BENCH'
+            p.primary_position = 'DEEP_BENCH'
         else:
             p.primary_line = 'DEEP_BENCH'
             p.primary_position = 'DEEP_BENCH'
-
         updates.append(p)
 
     Player.objects.bulk_update(updates, ['primary_line', 'primary_position'])
@@ -346,77 +443,88 @@ def curved_normalize(val, all_vals, mean=75, std=10, min_score=55, max_score=95)
 
 
 def bulk_update_player_skills():
-    # 🧠 Define your skill logic here
     skill_map = {
         "deep_huck_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
         "short_huck_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
         "under_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
         "handle_mark_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
         "handle_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
-
         "deep_huck_cut_offense": ["yards_received", "goals", "catches", "drops"],
         "short_huck_cut_offense": ["yards_received", "goals", "catches", "drops"],
         "under_cut_offense": ["catches", "yards_received", "goals", "drops"],
         "handle_cut_offense": ["catches", "drops"],
-
         "swing_throw_offense": ["completions", "throwaways", "stalls", "hockey_assists", "callahans_thrown"],
         "under_throw_offense": ["completions", "throwaways", "stalls", "assists"],
         "short_huck_throw_offense": ["hucks_attempted", "hucks_completed", "throwaways", "assists", "pulls"],
         "deep_huck_throw_offense": ["hucks_attempted", "hucks_completed", "throwaways", "assists", "pulls"],
     }
 
-    ufa_stats = list(UFAPlayerStatsYear.objects.select_related("player"))
-    player_map = {
-        (p.first_name, p.last_name): p for p in Player.objects.all()
+    offensive_fields = {
+        "yards_received", "goals", "catches", "completions", "throwaways", "stalls", "hockey_assists",
+        "callahans_thrown", "assists", "hucks_attempted", "hucks_completed", "pulls", "o_opportunities",
+        "o_opportunity_scores", "o_points_played", "o_points_scored"
+    }
+    defensive_fields = {
+        "blocks", "d_opportunity_stops", "d_opportunities", "d_points_played", "d_points_scored"
     }
 
-    # Prepare mapping: (name) → skill → score
+    ufa_stats = list(UFAPlayerStatsYear.objects.select_related("player"))
+    player_map = {(p.first_name, p.last_name): p for p in Player.objects.all()}
     player_scores = {}
 
     for skill_field, stat_fields in skill_map.items():
-        # Extract data matrix
-        data = np.array([
-            [getattr(p, f, 0) for f in stat_fields] for p in ufa_stats
-        ])
-        # Variance-based weighting
+        data = []
+        for p in ufa_stats:
+            row = []
+            for f in stat_fields:
+                value = getattr(p, f, 0)
+                denom = (
+                    max(1, p.o_points_played) if f in offensive_fields else
+                    max(1, p.d_points_played) if f in defensive_fields else
+                    max(1, p.o_points_played + p.d_points_played)
+                )
+                row.append(value / denom)
+            data.append(row)
+
+        data = np.array(data)
         variances = np.var(data, axis=0)
         total_var = np.sum(variances)
         weights = variances / total_var if total_var else np.ones(len(stat_fields)) / len(stat_fields)
         weights_dict = dict(zip(stat_fields, weights))
 
-        # Negate fields that penalize (basic rule: if "drop", "throwaway", etc.)
         for stat in stat_fields:
             if "drop" in stat or "throwaway" in stat or "stalls" in stat or "callahans_thrown" in stat:
                 weights_dict[stat] *= -1
 
-        # Score and normalize
         raw_scores = [
-            sum(getattr(p, s, 0) * weights_dict[s] for s in stat_fields)
+            sum(
+                getattr(p, s, 0) / (
+                    max(1, p.o_points_played) if s in offensive_fields else
+                    max(1, p.d_points_played) if s in defensive_fields else
+                    max(1, p.o_points_played + p.d_points_played)
+                ) * weights_dict[s]
+                for s in stat_fields
+            )
             for p in ufa_stats
         ]
-        norm_scores = [
-            curved_normalize(score, raw_scores) for score in raw_scores
-        ]
 
-        # Store in per-player dictionary
+        norm_scores = [curved_normalize(score, raw_scores) for score in raw_scores]
+
         for ufa_stat, score in zip(ufa_stats, norm_scores):
             key = (ufa_stat.player.first_name, ufa_stat.player.last_name)
             if key not in player_scores:
                 player_scores[key] = {}
             player_scores[key][skill_field] = score
 
-    # Apply scores to players and bulk update
     players_to_update = []
     for key, scores in player_scores.items():
         player = player_map.get(key)
         if player:
             for field, value in scores.items():
                 setattr(player, field, value)
-
             player.calculate_all_overall_ratings()
             players_to_update.append(player)
 
-    # Update all at once
     if players_to_update:
         all_fields = list(skill_map.keys()) + [
             'overall_rating',
@@ -438,6 +546,7 @@ def convert_all_ufa_stats_to_players(modeladmin, request, queryset):
 
         # Only create the Player and base info — no skill stats here
         player, created = Player.objects.update_or_create(
+            ufa_player=p,
             first_name=p.first_name,
             last_name=p.last_name,
             defaults={
@@ -540,7 +649,7 @@ class UFASeasonAdmin(admin.ModelAdmin):
     )
     list_filter = ('year',)
     search_fields = ('name',)
-    actions = [setup_2024_ufa_season]
+    actions = [setup_ufa_season]
 
 
 @admin.register(UFASeasonTeam)
@@ -561,6 +670,7 @@ def setup_simulation_environment(modeladmin, request, queryset):
     convert_all_ufa_stats_to_players(modeladmin, request, queryset)
     create_teams_from_ufa_teams(modeladmin, request, queryset)
     update_team_lines(modeladmin, request, queryset)
+    setup_ufa_season(modeladmin, request, queryset)
 
     messages.success(request, "UFA simulation environment set up successfully.")
 
