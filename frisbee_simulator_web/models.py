@@ -76,8 +76,8 @@ class Player(models.Model):
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, blank=True, null=True)
     teams = models.ManyToManyField('Team', related_name='teams_players', blank=True, null=True)
     seasons = models.ManyToManyField('Season', related_name='seasons_players', blank=True, null=True)
-    ufa_player = models.OneToOneField('UFAPlayer', on_delete=models.SET_NULL, null=True, blank=True, related_name='player')
-
+    ufa_player = models.OneToOneField('UFAPlayer', on_delete=models.SET_NULL, null=True, blank=True,
+                                      related_name='player')
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -118,7 +118,8 @@ class Team(models.Model):
     is_public = models.BooleanField(default=False)
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     year = models.IntegerField(validators=[MinValueValidator(1950), MaxValueValidator(2100)], blank=True, null=True)
-
+    ufa_team = models.OneToOneField('UFATeam', on_delete=models.SET_NULL, null=True, blank=True,
+                                      related_name='team')
     def __str__(self):
         return f"{self.location or ''} {self.mascot or ''}".strip()
 
