@@ -1,4 +1,5 @@
 import time
+from collections import defaultdict
 
 import requests
 from django.contrib import admin
@@ -306,7 +307,8 @@ def create_teams_from_ufa_teams(modeladmin, request, queryset):
             mascot=ufa_team.name,
             type="UFA",
             is_public=True,
-            year=ufa_team.year
+            year=ufa_team.year,
+            ufa_team=ufa_team
         )
 
         # Get UFA players on that team
@@ -434,7 +436,7 @@ def update_team_lines(modeladmin, request, queryset):
         team.save()
 
 
-def curved_normalize(val, all_vals, mean=75, std=10, min_score=55, max_score=95):
+def curved_normalize(val, all_vals, mean=80, std=10, min_score=65, max_score=95):
     mu = np.mean(all_vals)
     sigma = np.std(all_vals) or 1
     z = (val - mu) / sigma
@@ -444,98 +446,65 @@ def curved_normalize(val, all_vals, mean=75, std=10, min_score=55, max_score=95)
 
 def bulk_update_player_skills():
     skill_map = {
-        "deep_huck_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
-        "short_huck_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
-        "under_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
-        "handle_mark_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
-        "handle_cut_defense": ["blocks", "d_opportunity_stops", "d_points_played"],
-        "deep_huck_cut_offense": ["yards_received", "goals", "catches", "drops"],
-        "short_huck_cut_offense": ["yards_received", "goals", "catches", "drops"],
+        "deep_huck_cut_defense": ["blocks"],
+        "short_huck_cut_defense": ["blocks"],
+        "under_cut_defense": ["blocks"],
+        "handle_mark_defense": ["blocks"],
+        "handle_cut_defense": ["blocks", "callahans_caught"],
+        "deep_huck_cut_offense": ["yards_received", "goals"],
+        "short_huck_cut_offense": ["yards_received", "goals"],
         "under_cut_offense": ["catches", "yards_received", "goals", "drops"],
         "handle_cut_offense": ["catches", "drops"],
         "swing_throw_offense": ["completions", "throwaways", "stalls", "hockey_assists", "callahans_thrown"],
         "under_throw_offense": ["completions", "throwaways", "stalls", "assists"],
-        "short_huck_throw_offense": ["hucks_attempted", "hucks_completed", "throwaways", "assists", "pulls"],
-        "deep_huck_throw_offense": ["hucks_attempted", "hucks_completed", "throwaways", "assists", "pulls"],
-    }
-
-    offensive_fields = {
-        "yards_received", "goals", "catches", "completions", "throwaways", "stalls", "hockey_assists",
-        "callahans_thrown", "assists", "hucks_attempted", "hucks_completed", "pulls", "o_opportunities",
-        "o_opportunity_scores", "o_points_played", "o_points_scored"
-    }
-    defensive_fields = {
-        "blocks", "d_opportunity_stops", "d_opportunities", "d_points_played", "d_points_scored"
+        "short_huck_throw_offense": ["hucks_completed", "yards_thrown", "throwaways", "assists", "pulls"],
+        "deep_huck_throw_offense": ["hucks_completed", "yards_thrown", "throwaways", "assists", "pulls"],
     }
 
     ufa_stats = list(UFAPlayerStatsYear.objects.select_related("player"))
-    player_map = {(p.first_name, p.last_name): p for p in Player.objects.all()}
-    player_scores = {}
+    player_map = {p.ufa_player_id: p for p in Player.objects.exclude(ufa_player=None)}
+    player_scores = defaultdict(dict)
 
     for skill_field, stat_fields in skill_map.items():
-        data = []
-        for p in ufa_stats:
-            row = []
-            for f in stat_fields:
-                value = getattr(p, f, 0)
-                denom = (
-                    max(1, p.o_points_played) if f in offensive_fields else
-                    max(1, p.d_points_played) if f in defensive_fields else
-                    max(1, p.o_points_played + p.d_points_played)
-                )
-                row.append(value / denom)
-            data.append(row)
+        raw_scores = []
+        player_ids = []
 
-        data = np.array(data)
-        variances = np.var(data, axis=0)
-        total_var = np.sum(variances)
-        weights = variances / total_var if total_var else np.ones(len(stat_fields)) / len(stat_fields)
-        weights_dict = dict(zip(stat_fields, weights))
+        for stat in ufa_stats:
+            total = 0
+            for field in stat_fields:
+                value = getattr(stat, field, 0)
+                if "drop" in field or "throwaway" in field or "stalls" in field or "callahans_thrown" in field:
+                    total -= value
+                else:
+                    total += value
 
-        for stat in stat_fields:
-            if "drop" in stat or "throwaway" in stat or "stalls" in stat or "callahans_thrown" in stat:
-                weights_dict[stat] *= -1
+            raw_scores.append(total)
+            player_ids.append(stat.player.id)
 
-        raw_scores = [
-            sum(
-                getattr(p, s, 0) / (
-                    max(1, p.o_points_played) if s in offensive_fields else
-                    max(1, p.d_points_played) if s in defensive_fields else
-                    max(1, p.o_points_played + p.d_points_played)
-                ) * weights_dict[s]
-                for s in stat_fields
-            )
-            for p in ufa_stats
-        ]
+        normed_scores = [curved_normalize(score, raw_scores) for score in raw_scores]
 
-        norm_scores = [curved_normalize(score, raw_scores) for score in raw_scores]
-
-        for ufa_stat, score in zip(ufa_stats, norm_scores):
-            key = (ufa_stat.player.first_name, ufa_stat.player.last_name)
-            if key not in player_scores:
-                player_scores[key] = {}
-            player_scores[key][skill_field] = score
+        for pid, score in zip(player_ids, normed_scores):
+            if pid in player_map:
+                player_scores[pid][skill_field] = score
 
     players_to_update = []
-    for key, scores in player_scores.items():
-        player = player_map.get(key)
-        if player:
-            for field, value in scores.items():
-                setattr(player, field, value)
-            player.calculate_all_overall_ratings()
-            players_to_update.append(player)
+    for player in Player.objects.filter(id__in=player_scores.keys()):
+        for field, val in player_scores[player.id].items():
+            setattr(player, field, val)
+        player.calculate_all_overall_ratings()
+        players_to_update.append(player)
 
     if players_to_update:
-        all_fields = list(skill_map.keys()) + [
+        update_fields = list(skill_map.keys()) + [
             'overall_rating',
             'overall_handle_offense_rating',
             'overall_handle_defense_rating',
             'overall_cutter_offense_rating',
-            'overall_cutter_defense_rating'
+            'overall_cutter_defense_rating',
         ]
-        Player.objects.bulk_update(players_to_update, all_fields)
+        Player.objects.bulk_update(players_to_update, update_fields)
 
-    return len(players_to_update), skill_map.keys()
+    return len(players_to_update), list(skill_map.keys())
 
 
 def convert_all_ufa_stats_to_players(modeladmin, request, queryset):
