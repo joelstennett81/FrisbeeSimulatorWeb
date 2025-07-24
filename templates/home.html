@@ -3,25 +3,25 @@
 {% block content %}
     <title>Welcome to Frisbee Simulator Web</title>
     <div class="jumbotron text-center">
-        <h1 class="display-4">Welcome to Frisbee Simulator</h1>
-        <p class="lead">This is a web application for simulating Frisbee games.</p>
+        <h1 class="display-4">Welcome to UFA Simulator</h1>
+        <p class="lead">This is a web application for simulating UFA games.</p>
         <hr class="my-4">
-        <div class="row justify-content-around mb-4"> <!-- Add mb-4 for bottom margin -->
-            <div class="col-sm-6">
-                <a href="{% url 'create_player' %}" class="btn btn-lg btn-block btn-primary">Create Player</a>
-            </div>
-            <div class="col-sm-6">
-                <a href="{% url 'create_team' %}" class="btn btn-lg btn-block btn-primary">Create Team</a>
-            </div>
-        </div>
+{#        <div class="row justify-content-around mb-4"> <!-- Add mb-4 for bottom margin -->#}
+{#            <div class="col-sm-6">#}
+{#                <a href="{% url 'create_player' %}" class="btn btn-lg btn-block btn-primary">Create Player</a>#}
+{#            </div>#}
+{#            <div class="col-sm-6">#}
+{#                <a href="{% url 'create_team' %}" class="btn btn-lg btn-block btn-primary">Create Team</a>#}
+{#            </div>#}
+{#        </div>#}
         <div class="row justify-content-around">
             <div class="col-sm-6">
                 <a href="{% url 'create_individual_ufa_game' %}" class="btn btn-lg btn-block btn-primary">Create UFA
                     Game</a>
             </div>
-            <div class="col-sm-6">
-                <a href="{% url 'create_tournament' %}" class="btn btn-lg btn-block btn-primary">Create Tournament</a>
-            </div>
+{#            <div class="col-sm-6">#}
+{#                <a href="{% url 'create_tournament' %}" class="btn btn-lg btn-block btn-primary">Create Tournament</a>#}
+{#            </div>#}
         </div>
     </div>
 {% endblock %}

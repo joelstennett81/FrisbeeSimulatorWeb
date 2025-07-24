@@ -1,3 +1,30 @@
+<!-- Team Totals -->
+<div class="card mb-4">
+    <div class="card-header">Team Totals</div>
+    <div class="card-body">
+        <h5 class="card-title">{{ team_one.name }}</h5>
+        <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item">Total Assists: {{ team_one_totals.total_assists }}</li>
+            <li class="list-group-item">Total Goals: {{ team_one_totals.total_goals }}</li>
+            <li class="list-group-item">Total Yards: {{ team_one_totals.total_throwing_yards }}</li>
+            <li class="list-group-item">Total Throwaways: {{ team_one_totals.total_throwaways }}</li>
+            <li class="list-group-item">Total Drops: {{ team_one_totals.total_drops }}</li>
+            <li class="list-group-item">Total Blocks: {{ team_one_totals.total_blocks }}</li>
+        </ul>
+
+        <h5 class="card-title">{{ team_two.name }}</h5>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Total Assists: {{ team_two_totals.total_assists }}</li>
+            <li class="list-group-item">Total Goals: {{ team_two_totals.total_goals }}</li>
+            <li class="list-group-item">Total Throwing Yards: {{ team_two_totals.total_throwing_yards }}</li>
+            <li class="list-group-item">Total Receiving Yards: {{ team_two_totals.total_receiving_yards }}</li>
+            <li class="list-group-item">Total Throwaways: {{ team_two_totals.total_throwaways }}</li>
+            <li class="list-group-item">Total Drops: {{ team_two_totals.total_drops }}</li>
+            <li class="list-group-item">Total Blocks: {{ team_two_totals.total_blocks }}</li>
+        </ul>
+    </div>
+</div>
+
 <!-- Top Goals Card -->
 <div class="card mb-4">
     <div class="card-header">Top Goals</div>
@@ -49,30 +76,4 @@
     </ul>
 </div>
 
-<!-- Team Totals -->
-<div class="card mb-4">
-    <div class="card-header">Team Totals</div>
-    <div class="card-body">
-        <h5 class="card-title">{{ team_one.name }}</h5>
-        <ul class="list-group list-group-flush mb-3">
-            <li class="list-group-item">Total Assists: {{ team_one_totals.total_assists }}</li>
-            <li class="list-group-item">Total Goals: {{ team_one_totals.total_goals }}</li>
-            <li class="list-group-item">Total Throwing Yards: {{ team_one_totals.total_throwing_yards }}</li>
-            <li class="list-group-item">Total Receiving Yards: {{ team_one_totals.total_receiving_yards }}</li>
-            <li class="list-group-item">Total Throwaways: {{ team_one_totals.total_throwaways }}</li>
-            <li class="list-group-item">Total Drops: {{ team_one_totals.total_drops }}</li>
-            <li class="list-group-item">Total Blocks: {{ team_one_totals.total_blocks }}</li>
-        </ul>
 
-        <h5 class="card-title">{{ team_two.name }}</h5>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Total Assists: {{ team_two_totals.total_assists }}</li>
-            <li class="list-group-item">Total Goals: {{ team_two_totals.total_goals }}</li>
-            <li class="list-group-item">Total Throwing Yards: {{ team_two_totals.total_throwing_yards }}</li>
-            <li class="list-group-item">Total Receiving Yards: {{ team_two_totals.total_receiving_yards }}</li>
-            <li class="list-group-item">Total Throwaways: {{ team_two_totals.total_throwaways }}</li>
-            <li class="list-group-item">Total Drops: {{ team_two_totals.total_drops }}</li>
-            <li class="list-group-item">Total Blocks: {{ team_two_totals.total_blocks }}</li>
-        </ul>
-    </div>
-</div>

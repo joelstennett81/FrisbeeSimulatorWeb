@@ -9,6 +9,15 @@ def detail_game(request, pk):
         Prefetch('ufa_game_points', queryset=UFAPoint.objects.order_by('id'))
     ).get(pk=pk)
 
+    points_with_quarter = []
+    quarter = 1
+
+    for i, point in enumerate(game.ufa_game_points.all()):
+        if i != 0 and point.team_one_score_post_point == 0 and point.team_two_score_post_point == 0:
+            quarter += 1
+            continue
+        points_with_quarter.append((quarter, point))
+
     top_assists = UFAPlayerGameStat.objects.filter(game=game).order_by(F('assists').desc())[:3]
     top_goals = UFAPlayerGameStat.objects.filter(game=game).order_by(F('goals').desc())[:3]
     top_throwaways = UFAPlayerGameStat.objects.filter(game=game).order_by(F('throwaways').desc())[:3]
@@ -48,6 +57,7 @@ def detail_game(request, pk):
         'team_two_totals': team_two_totals,
         'team_one': team_one,
         'team_two': team_two,
+        'points_with_quarter': points_with_quarter
     })
 
 

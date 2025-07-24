@@ -259,7 +259,7 @@ class UFAPointSimulation:
     def determine_receiver_options(self):
         self.pointPrintStatement += (
                 str(self.playerWithDisc.player.last_name) + ' has the disc at this location: ' + str(
-            self.discCurrentLocation) + '\n')
+            self.discCurrentLocation) + ' yard line. ')
         self.receiverOptions = []
         if self.playerWithDisc == self.sevenOnFieldForOffense[0]:
             if self.throwChoice == 'swing':
@@ -446,18 +446,14 @@ class UFAPointSimulation:
         return max_throw_distance
 
     def simulate_result_of_throw(self, time_of_throw=None, quarter=None, game_time=None):
-        self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' tries to throw to: ' + str(
-            self.playerBeingThrownTo.player.last_name) + ' for ' + str(
-            self.randomYardsThrown) + 'yards \n')
         self.throwStartingProbability = random.randint(1, 100)
         if self.throwStartingProbability < self.probabilityThrowIsCompleted:
             # play direction is either positive or negative
             yards_added = self.randomYardsThrown * self.playDirection
             self.discCurrentLocation += yards_added
-            print_message = (str(self.teamOnOffenseCurrently.team.mascot) + ' completed ' + str(
-                self.throwChoice) + ' at this location: ' + str(
-                self.discCurrentLocation) + ' with throwProb: ' +str(self.throwStartingProbability) + '; with probComplete: ' + str(self.probabilityThrowIsCompleted) + '; play direction:  ' + str(self.playDirection) + '\n')
-            self.pointPrintStatement += print_message
+            self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' tries to throw a ' + str(self.throwChoice) + 'to ' + str(
+                self.playerBeingThrownTo.player.last_name) + ' for ' + str(
+                self.randomYardsThrown) + 'yards and it is completed. \n')
             if quarter == 1:
                 if time_of_throw + game_time > 720:
                     self.pointPrintStatement += (
@@ -493,7 +489,7 @@ class UFAPointSimulation:
                 self.assign_completions(isCompletion=True)
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
-                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
+                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + ' Scored! ' + str(
                     self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
                 self.pointOver = True
             elif (self.playDirection == -1) and (-20 < self.discCurrentLocation < 0):
@@ -505,7 +501,7 @@ class UFAPointSimulation:
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
                 self.assign_completions(isCompletion=True)
-                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
+                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + ' Scored! ' + str(
                     self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
                 self.pointOver = True
             elif self.discCurrentLocation >= 100:
@@ -521,9 +517,10 @@ class UFAPointSimulation:
                 self.playerWithDisc = self.playerBeingThrownTo
                 self.playerGuardingDisc = self.playerGuardingPlayerBeingThrownTo
         else:
-            self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + ' throw was blocked at: ' + str(
-                self.discCurrentLocation) + '; starting prob: ' + str(
-                self.throwStartingProbability) + '; throwComp prob: ' + str(self.probabilityThrowIsCompleted) + '\n')
+            self.pointPrintStatement += (str(self.playerWithDisc.player.last_name) + ' tries to throw a ' + str(self.throwChoice) + ' to ' + str(
+                self.playerBeingThrownTo.player.last_name) + ' for ' + str(
+                self.randomYardsThrown) + 'yards but was blocked. \n')
+
             yards_added = self.randomYardsThrown * self.playDirection
             self.discCurrentLocation += yards_added
             # Disc still moves, even if it is dropped, have to handle if disc lands in middle of end zone
@@ -605,8 +602,8 @@ class UFAPointSimulation:
             self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
             self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
             self.pointPrintStatement += (
-                    str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc at this location: ' + str(
-                self.discCurrentLocation) + '\n')
+                    '\n' + str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc at this location: ' + str(
+                self.discCurrentLocation) + ' yard line. \n')
         else:
             self.teamOnOffenseCurrently = self.teamInPointSimulationOne
             self.teamOnDefenseCurrently = self.teamInPointSimulationTwo
@@ -615,8 +612,8 @@ class UFAPointSimulation:
             self.playerWithDisc = self.playerGuardingPlayerBeingThrownTo
             self.playerGuardingDisc = self.receiverOptions[self.randomReceiver]
             self.pointPrintStatement += (
-                    str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc at this location: ' + str(
-                self.discCurrentLocation) + '\n')
+                    '\n' + str(self.teamOnOffenseCurrently.team.mascot) + ' now has the disc at this location: ' + str(
+                self.discCurrentLocation) + ' yard line. \n')
         self.flip_play_direction()
 
     def flip_play_direction(self):

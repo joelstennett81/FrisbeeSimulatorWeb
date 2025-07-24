@@ -463,6 +463,9 @@ def bulk_update_player_skills():
 
     ufa_stats = list(UFAPlayerStatsYear.objects.select_related("player"))
     player_map = {p.ufa_player_id: p for p in Player.objects.exclude(ufa_player=None)}
+
+    # Create a mapping from team_id to number of wins
+    team_wins = {team.id: team.wins for team in UFATeam.objects.filter(year=2025)}
     player_scores = defaultdict(dict)
 
     for skill_field, stat_fields in skill_map.items():
@@ -478,7 +481,12 @@ def bulk_update_player_skills():
                 else:
                     total += value
 
-            raw_scores.append(total)
+            # Get wins for player's team
+            team_link = UFAPlayerTeam.objects.filter(player=stat.player, year=2025, active=True).first()
+            wins = team_wins.get(team_link.team_id if team_link else None, 0)
+
+            final_score = total + 0.3 * wins  # adjust weight as needed
+            raw_scores.append(final_score)
             player_ids.append(stat.player.id)
 
         normed_scores = [curved_normalize(score, raw_scores) for score in raw_scores]

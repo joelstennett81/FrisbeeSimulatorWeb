@@ -2,45 +2,60 @@
 
 {% block content %}
     <div class="container py-4">
-        <h1 class="mb-4">Game Details</h1>
-        <div class="card mb-4">
-            <div class="card-header">Game Information</div>
+        <h1 class="mb-4 text-center">Game Summary</h1>
+
+        <!-- Game Info -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">Game Information</div>
             <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Winner:</strong> {{ game.winner.team }}</li>
                 <li class="list-group-item">
-                    Team One: {{ game.team_one.team }}
+                    <strong>Final Score:</strong>
+                    {{ game.winner.team }} {{ game.winner_score }}
+                    - {{ game.loser.team }} {{ game.loser_score }}
                 </li>
-                <li class="list-group-item">
-                    Team Two: {{ game.team_two.team }}
-                </li>
-                <li class="list-group-item">
-                    Winner: {{ game.winner.team }}
-                </li>
-                <!-- Add more game details as needed -->
             </ul>
         </div>
-        <div class="card mb-4">
-            <div class="card-header">What happened during game:</div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">Point Number</th>
-                    <th scope="col">Score Post Point</th>
-                    <th scope="col">Details</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for point in game.ufa_game_points.all %}
-                    <tr>
-                        <td>{{ point.point_number_in_game }}</td>
-                        <td>{{ point.team_one_score_post_point }}-{{ point.team_two_score_post_point }}</td>
-                        <td><a href="{% url 'ufa_detail_point' point.id %}">Details</a></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <h2 class="mt-5 mb-4">Player Stats</h2>
-        {% include "ufa_reusable_cards/results_stats_card.html" %}
 
+        <!-- Game Events Table -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">Point-by-Point Breakdown</div>
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Quarter</th>
+                        <th scope="col">{{ game.team_one.team }} - {{ game.team_two.team }}</th>
+                        <th scope="col">Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for quarter, point in points_with_quarter %}
+                        <tr>
+                            <td>
+                                {% if quarter == 5 %}
+                                    OT
+                                {% else %}
+                                    Q{{ quarter }}
+                                {% endif %}
+                            </td>
+                            <td>{{ point.team_one_score_post_point }} - {{ point.team_two_score_post_point }}</td>
+                            <td>
+                                <a href="{% url 'ufa_detail_point' point.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">No points recorded for this game.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Player Stats -->
+        <h2 class="mt-5 mb-3 text-center">Top Player Stats</h2>
+        {% include "ufa_reusable_cards/results_stats_card.html" %}
     </div>
 {% endblock %}

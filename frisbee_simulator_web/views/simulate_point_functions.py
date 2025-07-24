@@ -256,7 +256,7 @@ class PointSimulation:
     def determine_receiver_options(self):
         self.pointPrintStatement += (
                 str(self.playerWithDisc.player.last_name) + ' has the disc at this location: ' + str(
-            self.discCurrentLocation) + '\n')
+            self.discCurrentLocation) + ' yard line. ')
         self.receiverOptions = []
         if self.playerWithDisc == self.sevenOnFieldForOffense[0]:
             if self.throwChoice == 'swing':
@@ -454,7 +454,7 @@ class PointSimulation:
                 self.assign_completions(isCompletion=True)
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
-                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
+                self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
                     self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
                 self.pointOver = True
             elif (self.playDirection == -1) and (-20 < self.discCurrentLocation < 0):
@@ -467,7 +467,7 @@ class PointSimulation:
                 self.assign_completion_yardage()
                 self.assign_goals_and_assists()
                 self.assign_completions(isCompletion=True)
-                self.pointPrintStatement += ('Team ' + str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
+                self.pointPrintStatement += (str(self.teamOnOffenseCurrently.team.mascot) + 'Scored! ' + str(
                     self.assistThrower) + ' threw the assist to ' + str(self.goalScorer.player.last_name) + '\n')
                 self.pointOver = True
             elif self.discCurrentLocation > 90:

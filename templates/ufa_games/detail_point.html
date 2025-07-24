@@ -3,18 +3,26 @@
 {% block content %}
     <div class="container py-4">
         <h1 class="mb-4">Point Details</h1>
+
         <div class="card mb-4">
-            <div class="card-header">Point Information</div>
+            <div class="card-header font-weight-bold">Point Summary</div>
             <ul class="list-group list-group-flush">
+
                 <li class="list-group-item">
-                    Point Number: {{ point.point_number_in_game }}
+                    <strong>Score After Point:</strong><br>
+                    <span class="badge badge-primary">{{ point.team_one.team }}</span>: {{ point.team_one_score_post_point }}
+                    &nbsp; — &nbsp;
+                    <span class="badge badge-success">{{ point.team_two.team }}</span>: {{ point.team_two_score_post_point }}
                 </li>
+
                 <li class="list-group-item">
-                    Score After Point: {{ point.team_one_score_post_point }}-{{ point.team_two_score_post_point }}
+                    <strong>Point Winner:</strong>
+                    <span class="badge badge-info">{{ point.winner.team }}</span>
                 </li>
+
                 <li class="list-group-item">
-                    What Happened During Point:
-                    <pre>{{ point.print_statements|linebreaks }}</pre>
+                    <strong>Point Breakdown:</strong>
+                    <pre class="bg-light p-2 rounded"><code>{{ point.print_statements|linebreaksbr }}</code></pre>
                 </li>
             </ul>
         </div>
