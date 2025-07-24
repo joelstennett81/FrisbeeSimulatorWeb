@@ -42,8 +42,8 @@ def create_individual_ufa_game(request):
             game.game_type = 'UFA'
             game.season = season
             game.save()
-            UFASeasonTeam.objects.create(team=game.team_one.team, season=season, division=game.team_one.division)
-            UFASeasonTeam.objects.create(team=game.team_two.team, season=season, division=game.team_two.division)
+            UFASeasonTeam.objects.update_or_create(team=game.team_one.team, season=season, division=game.team_one.division)
+            UFASeasonTeam.objects.update_or_create(team=game.team_two.team, season=season, division=game.team_two.division)
 
             return redirect('ufa_games_list')
     else:

@@ -194,8 +194,8 @@ class UFASeasonGameForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         season = UFASeason.objects.filter(year=2025).first()
-        self.fields['team_one'].queryset = UFASeasonTeam.objects.filter(season=season)
-        self.fields['team_two'].queryset = UFASeasonTeam.objects.filter(season=season)
+        self.fields['team_one'].queryset = UFASeasonTeam.objects.filter(season=season).order_by('team__location')
+        self.fields['team_two'].queryset = UFASeasonTeam.objects.filter(season=season).order_by('team__location')
 
         # Apply form-control to dropdowns and date field
         self.fields['team_one'].widget.attrs.update({'class': 'form-control'})
