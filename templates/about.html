@@ -1,22 +1,51 @@
 {% extends "base.html" %}
 
-{% block title %}About Us{% endblock %}
+{% block title %}About the UFA Simulator{% endblock %}
 
 {% block content %}
-    <div class="container py-4">
-        <h1 class="mb-4">About Us</h1>
-        <p>Welcome to the Frisbee Simulator! This platform allows you to create, manage, and simulate frisbee
-            games.</p>
-        <h2>Creating Players</h2>
-        <p>You can create players by clicking on the "Create Player" button. You'll be able to enter details such as the
-            player's name, position, and other attributes.</p>
-        <h2>Creating Teams</h2>
-        <p>Once you have created players, you can create teams. Select up to 7 players for each line (offense, defense,
-            bench) and assign them to your team.</p>
-        <h2>Creating Games</h2>
-        <p>With your teams ready, you can now create games. Choose two teams to play against each other and start the
-            simulation.</p>
-        <p>Enjoy simulating your favorite frisbee games!</p>
-        <p>For more information or to get in touch, please send an email to owner@beanstechnologies.com</p>
+<div class="container py-4">
+    <h1 class="mb-4 text-center">About the UFA Simulator</h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <p class="lead">
+                The UFA Simulator is a platform for simulating real or custom Ultimate Frisbee games using detailed player stats, team data, and point-by-point logic based on the UFA (Ultimate Frisbee Association) season.
+            </p>
+            <p>
+                Whether you're a fan, analyst, or player, this tool gives you the power to explore how teams perform, compare players, and dive into the strategy behind every point.
+            </p>
+        </div>
     </div>
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-primary text-white">🔢 Player Stats & Ratings</div>
+        <div class="card-body">
+            <p>
+                Player ratings are calculated using real-world stats from the UFA season. Each player has skill scores for different offensive and defensive roles, updated with weighted statistical formulas to reflect their impact on the field.
+            </p>
+        </div>
+    </div>
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-success text-white">🏟️ Team Creation & Game Simulation</div>
+        <div class="card-body">
+            <p>
+                Select teams from the UFA season. Simulate full games with detailed point-by-point results.
+            </p>
+        </div>
+    </div>
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-warning text-dark">📊 Game Analysis</div>
+        <div class="card-body">
+            <p>
+                Every game includes breakdowns of player performance, team totals, and stat leaders (goals, assists, yards, etc.). Explore who made the biggest impact on the outcome and how individual performances influenced the final score.
+            </p>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <p class="mt-4">Questions or feedback? Email <a href="mailto:joelstennett17@gmail.com">joelstennett17@gmail.com</a></p>
+    </div>
+</div>
 {% endblock %}

@@ -25,13 +25,12 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'ufa_games_list' %}">UFA Games</a></li>
-{##}
-{#                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>#}
-{#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">Players</a></li>#}
-{#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_teams' %}">Teams</a></li>#}
+                    {#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_players' %}">Players</a></li>#}
+                    {#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_teams' %}">Teams</a></li>#}
                     {#                    <li class="nav-item"><a class="nav-link" href="{% url 'games_list' %}">Games</a></li>#}
-{#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">Tournaments</a>#}
+                    {#                    <li class="nav-item"><a class="nav-link" href="{% url 'list_tournaments' %}">Tournaments</a>#}
                     </li>
                 {% endif %}
             </ul>

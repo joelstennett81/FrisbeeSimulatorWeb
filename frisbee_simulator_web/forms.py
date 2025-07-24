@@ -185,27 +185,25 @@ class GameForm(forms.ModelForm):
 
     class Meta:
         model = Game
-        fields = ['team_one', 'team_two', 'date']
+        fields = ['team_one', 'team_two', 'date', 'is_public']
 
 
 class UFASeasonGameForm(forms.ModelForm):
-    is_public = forms.BooleanField(
-        required=False,
-        help_text="Do you want to allow other users to see and use this?"
-    )
-
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super().__init__(*args, **kwargs)
-        user_profile = self.request.user.profile
-        # Filter to only teams created by this user
+
         season = UFASeason.objects.filter(year=2025).first()
         self.fields['team_one'].queryset = UFASeasonTeam.objects.filter(season=season)
         self.fields['team_two'].queryset = UFASeasonTeam.objects.filter(season=season)
 
+        # Apply form-control to dropdowns and date field
+        self.fields['team_one'].widget.attrs.update({'class': 'form-control'})
+        self.fields['team_two'].widget.attrs.update({'class': 'form-control'})
+
     class Meta:
         model = UFASeasonGame
-        fields = ['team_one', 'team_two', 'date']
+        fields = ['team_one', 'team_two']
 
 
 class UpdateTournamentTeamPoolPlaySeedForm(forms.ModelForm):
