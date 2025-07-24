@@ -226,18 +226,24 @@ class UFAGameSimulation:
                     self.isStartOfOvertime = True
                     self.setup_first_point_of_period(5)
                 else:
+                    print('score 1: ', self.teamInGameSimulationOne.score)
+                    print('score 2: ', self.teamInGameSimulationTwo.score)
                     if self.teamInGameSimulationOne.score > self.teamInGameSimulationTwo.score:
+                        print('in if')
                         self.winner = self.teamInGameSimulationOne.seasonTeam
                         self.loser = self.teamInGameSimulationTwo.seasonTeam
                         self.game.winner_score = self.teamInGameSimulationOne.score
                         self.game.loser_score = self.teamInGameSimulationTwo.score
                         self.gameOver = True
                     else:
+                        print('in else')
                         self.winner = self.teamInGameSimulationTwo.seasonTeam
                         self.loser = self.teamInGameSimulationOne.seasonTeam
                         self.game.winner_score = self.teamInGameSimulationTwo.score
                         self.game.loser_score = self.teamInGameSimulationOne.score
                         self.gameOver = True
+                    print('self.winner: ', self.winner)
+                    print('self.loser: ', self.loser)
             elif (self.quarter == 5):
                 if self.teamInGameSimulationOne.score > self.teamInGameSimulationTwo.score:
                     self.winner = self.teamInGameSimulationOne.seasonTeam
