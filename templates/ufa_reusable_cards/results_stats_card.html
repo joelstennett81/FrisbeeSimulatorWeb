@@ -1,79 +1,109 @@
-<!-- Team Totals -->
+<!-- Team Totals + Top Stats by Team -->
 <div class="card mb-4">
-    <div class="card-header">Team Totals</div>
+    <div class="card-header">Team Breakdown</div>
     <div class="card-body">
-        <h5 class="card-title">{{ team_one.name }}</h5>
-        <ul class="list-group list-group-flush mb-3">
-            <li class="list-group-item">Total Assists: {{ team_one_totals.total_assists }}</li>
-            <li class="list-group-item">Total Goals: {{ team_one_totals.total_goals }}</li>
-            <li class="list-group-item">Total Yards: {{ team_one_totals.total_throwing_yards }}</li>
-            <li class="list-group-item">Total Throwaways: {{ team_one_totals.total_throwaways }}</li>
-            <li class="list-group-item">Total Drops: {{ team_one_totals.total_drops }}</li>
-            <li class="list-group-item">Total Blocks: {{ team_one_totals.total_blocks }}</li>
-        </ul>
+        <div class="row">
+            <!-- Team One Column -->
+            <div class="col-md-6">
+                <h4 class="mb-3">{{ team_one.name }}</h4>
 
-        <h5 class="card-title">{{ team_two.name }}</h5>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Total Assists: {{ team_two_totals.total_assists }}</li>
-            <li class="list-group-item">Total Goals: {{ team_two_totals.total_goals }}</li>
-            <li class="list-group-item">Total Throwing Yards: {{ team_two_totals.total_throwing_yards }}</li>
-            <li class="list-group-item">Total Receiving Yards: {{ team_two_totals.total_receiving_yards }}</li>
-            <li class="list-group-item">Total Throwaways: {{ team_two_totals.total_throwaways }}</li>
-            <li class="list-group-item">Total Drops: {{ team_two_totals.total_drops }}</li>
-            <li class="list-group-item">Total Blocks: {{ team_two_totals.total_blocks }}</li>
-        </ul>
+                <h6>Team Totals</h6>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">Goals: {{ team_one_totals.total_goals }}</li>
+                    <li class="list-group-item">Throwing Yards: {{ team_one_totals.total_throwing_yards }}</li>
+                    <li class="list-group-item">Receiving Yards: {{ team_one_totals.total_receiving_yards }}</li>
+                    <li class="list-group-item">Blocks: {{ team_one_totals.total_blocks }}</li>
+                    <li class="list-group-item">Throwaways: {{ team_one_totals.total_throwaways }}</li>
+                    <li class="list-group-item">Drops: {{ team_one_totals.total_drops }}</li>
+                </ul>
+
+                <h6 class="mt-4">Top Players</h6>
+                <strong>Goals</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_one_stats.top_goals %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.goals }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Assists</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_one_stats.top_assists %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.assists }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Throwing Yards</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_one_stats.top_throwing_yards %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.throwing_yards }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Receiving Yards</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_one_stats.top_receiving_yards %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.receiving_yards }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Throwaways</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_one_stats.top_throwaways %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.throwaways }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Team Two Column -->
+            <div class="col-md-6">
+                <h4 class="mb-3">{{ team_two.name }}</h4>
+
+                <h6>Team Totals</h6>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">Goals: {{ team_two_totals.total_goals }}</li>
+                    <li class="list-group-item">Throwing Yards: {{ team_two_totals.total_throwing_yards }}</li>
+                    <li class="list-group-item">Receiving Yards: {{ team_two_totals.total_receiving_yards }}</li>
+                    <li class="list-group-item">Blocks: {{ team_two_totals.total_blocks }}</li>
+                    <li class="list-group-item">Throwaways: {{ team_two_totals.total_throwaways }}</li>
+                    <li class="list-group-item">Drops: {{ team_two_totals.total_drops }}</li>
+                </ul>
+
+                <h6 class="mt-4">Top Players</h6>
+                <strong>Goals</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_two_stats.top_goals %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.goals }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Assists</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_two_stats.top_assists %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.assists }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Throwing Yards</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_two_stats.top_throwing_yards %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.throwing_yards }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Receiving Yards</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_two_stats.top_receiving_yards %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.receiving_yards }}</li>
+                    {% endfor %}
+                </ul>
+
+                <strong>Throwaways</strong>
+                <ul class="list-group list-group-flush mb-3">
+                    {% for stat in team_two_stats.top_throwaways %}
+                        <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}: {{ stat.throwaways }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
-
-<!-- Top Goals Card -->
-<div class="card mb-4">
-    <div class="card-header">Top Goals</div>
-    <ul class="list-group list-group-flush">
-        {% for stat in top_goals %}
-            <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}
-                ({{ stat.team }}): {{ stat.goals }}</li>
-        {% endfor %}
-    </ul>
-</div>
-<!-- Top Assists Card -->
-<div class="card mb-4">
-    <div class="card-header">Top Assists</div>
-    <ul class="list-group list-group-flush">
-        {% for stat in top_assists %}
-            <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}
-                ({{ stat.team }}): {{ stat.assists }}</li>
-        {% endfor %}
-    </ul>
-</div>
-<!-- Top Throwing Yards Card -->
-<div class="card mb-4">
-    <div class="card-header">Top Throwing Yards</div>
-    <ul class="list-group list-group-flush">
-        {% for stat in top_throwing_yards %}
-            <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}
-                ({{ stat.team }}): {{ stat.throwing_yards }}</li>
-        {% endfor %}
-    </ul>
-</div>
-<!-- Top Receiving Yards Card -->
-<div class="card mb-4">
-    <div class="card-header">Top Receiving Yards</div>
-    <ul class="list-group list-group-flush">
-        {% for stat in top_receiving_yards %}
-            <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}
-                ({{ stat.team }}): {{ stat.receiving_yards }}</li>
-        {% endfor %}
-    </ul>
-</div>
-<!-- Top Throwaways Card -->
-<div class="card mb-4">
-    <div class="card-header">Top Throwaways</div>
-    <ul class="list-group list-group-flush">
-        {% for stat in top_throwaways %}
-            <li class="list-group-item">{{ stat.player.first_name }} {{ stat.player.last_name }}
-                ({{ stat.team }}): {{ stat.throwaways }}</li>
-        {% endfor %}
-    </ul>
-</div>
-
-

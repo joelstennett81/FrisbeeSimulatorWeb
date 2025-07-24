@@ -1,3 +1,23 @@
 {% extends 'base_form.html' %}
 
 {% block title %}Create New UFA Game{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4 text-center">Create UFA Game</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.team_one.id_for_label }}">Team One</label>
+                {{ form.team_one }}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="{{ form.team_two.id_for_label }}">Team Two</label>
+                {{ form.team_two }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
+{% endblock %}

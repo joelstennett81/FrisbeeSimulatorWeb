@@ -87,14 +87,10 @@ def simulate_individual_ufa_game(request, game_id):
     gameSimulation = UFAGameSimulation(season=game.season, game=game)
     gameSimulation.coin_flip()
     gameSimulation.simulate_full_ufa_game()
-    print('type winner: ', type(gameSimulation.winner))
-    print('type team1: ', type(gameSimulation.teamInGameSimulationOne))
     if gameSimulation.winner == gameSimulation.teamInGameSimulationOne.seasonTeam:
-        print('winner is one')
         game.winner = gameSimulation.teamInGameSimulationOne.seasonTeam
         game.loser = gameSimulation.teamInGameSimulationTwo.seasonTeam
     else:
-        print('else')
         game.winner = gameSimulation.teamInGameSimulationTwo.seasonTeam
         game.loser = gameSimulation.teamInGameSimulationOne.seasonTeam
     game.created_by = request.user.profile
@@ -111,5 +107,5 @@ def games_list(request):
 
 @login_required(login_url='/login/')
 def ufa_games_list(request):
-    games = UFASeasonGame.objects.all()
+    games = UFASeasonGame.objects.filter(created_by=request.user.profile)
     return render(request, 'ufa_games/ufa_games_list.html', {'games': games})
