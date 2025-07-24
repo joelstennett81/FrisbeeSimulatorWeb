@@ -8,10 +8,8 @@
             <table class="table table-striped table-bordered">
                 <thead class="thead-dark">
                 <tr>
-                    <th>Date</th>
                     <th>Team One</th>
                     <th>Team Two</th>
-                    <th>Game Type</th>
                     <th>Status</th>
                     <th>Winner</th>
                     <th>Loser</th>
@@ -22,10 +20,8 @@
                 <tbody>
                 {% for game in games %}
                     <tr class="{% if game.is_completed %}table-success{% else %}table-warning{% endif %}">
-                        <td>{{ game.date|date:"Y-m-d H:i" }}</td>
                         <td>{{ game.team_one.team }}</td>
                         <td>{{ game.team_two.team }}</td>
-                        <td>{{ game.get_game_type_display }}</td>
                         <td>{% if game.is_completed %}Completed{% else %}Not Completed{% endif %}</td>
                         <td>{{ game.winner.team }}</td>
                         <td>{{ game.loser.team }}</td>
